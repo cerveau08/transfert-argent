@@ -6,6 +6,8 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.2",
+        "laminas/laminas-code": "^3.4",
+        "laminas/laminas-eventmanager": "^3.2",
         "lexik/jwt-authentication-bundle": "^2.6",
         "nesbot/carbon": "^2.28",
         "symfony/console": "4.4.*",

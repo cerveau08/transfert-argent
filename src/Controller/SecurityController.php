@@ -19,10 +19,11 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class SecurityController extends AbstractController
 {
+   
      /**
-     * @Route("/register", name="register", methods={"POST"})
+     * @Route("/users", name="register", methods={"POST"})
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+  /*  public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $values = json_decode($request->getContent());
         if(isset($values->username,$values->password)) {
@@ -50,7 +51,7 @@ class SecurityController extends AbstractController
                 {
                     $user->SetRoles([$values->roles]);
                 }*/
-            $user->setLogin($values->login);
+         /*   $user->setLogin($values->login);
             $user->setEmail($values->email);
            
             $errors = $validator->validate($user);
@@ -75,5 +76,17 @@ class SecurityController extends AbstractController
             'message' => 'Vous devez renseigner les clés username et password'
         ];
         return new JsonResponse($data, 500);
+    }
+*/
+    /**
+     * @Route("/login_check", name="login", methods={"POST"})
+     */
+    public function login()
+    {
+        $user = $this->getUser();
+        return $this->json([
+            'username' => $user->getUsername(),
+            'roles' => $user->getRoles()
+        ]);
     }
 }

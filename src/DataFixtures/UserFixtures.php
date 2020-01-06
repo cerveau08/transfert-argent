@@ -18,7 +18,7 @@ class UserFixtures extends Fixture
     public function load(ObjectManager $manager)
     { 
         $profil = new Profil();
-        $profil->setLibelle('ROLE_ADMIN_SYSTEM');
+        $profil->setLibelle('supadmin');
         $manager->persist($profil);
         $manager->flush();
         

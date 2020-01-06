@@ -5,9 +5,11 @@ namespace App\Entity;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\ProfilRepository")
  */
 class Profil
