@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -23,11 +24,12 @@ class SecurityController extends AbstractController
      /**
      * @Route("/users", name="register", methods={"POST"})
      */
-  /*  public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $values = json_decode($request->getContent());
         if(isset($values->username,$values->password)) {
             $user = new User();
+            if($request->get('profil') !=2){
             $user->setUsername($values->username);
             $user->setPassword($passwordEncoder->encodePassword($user, $values->password));
              // recuperer id profil
@@ -51,7 +53,7 @@ class SecurityController extends AbstractController
                 {
                     $user->SetRoles([$values->roles]);
                 }*/
-         /*   $user->setLogin($values->login);
+            $user->setLogin($values->login);
             $user->setEmail($values->email);
            
             $errors = $validator->validate($user);
@@ -71,13 +73,19 @@ class SecurityController extends AbstractController
 
             return new JsonResponse($data, 201);
         }
+        if($request->get('profil')==2){
+            throw new HttpException(401,'Vous ne pouvez pas creer un admin system');
+        }
+    }
         $data = [
             'status' => 500,
             'message' => 'Vous devez renseigner les clés username et password'
         ];
         return new JsonResponse($data, 500);
+        
+    
     }
-*/
+
     /**
      * @Route("/login_check", name="login", methods={"POST"})
      */

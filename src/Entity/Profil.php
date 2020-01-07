@@ -6,11 +6,20 @@ use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ApiResource()
- * @ORM\Entity(repositoryClass="App\Repository\ProfilRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\RoleRepository")
+ * @ApiResource(
+ * attributes={"access_control"="is_granted('ROLE_ADMIN')"},
+ * subresourceOperations={
+ *          "api_role_get_collection"= {
+ *              "method"="GET",
+ *              "access_control"="has_role('ROLE_ADMIN')"
+ *                       }
+ *                  }
+ * )
  */
 class Profil
 {
@@ -28,6 +37,7 @@ class Profil
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="profil")
+     * @ApiSubresource(maxDepth=1)
      */
     private $users;
 

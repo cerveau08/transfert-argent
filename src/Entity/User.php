@@ -2,15 +2,55 @@
 
 namespace App\Entity;
 
+
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
- * @ApiResource()
+ * An offer from my shop - this description will be automatically extracted form the PHPDoc to document the API.
+ *
+ * @ApiResource(
+ * collectionOperations={
+ *          "get"={"security"="is_granted(['ROLE_ADMIN_ SYSTEM','ROLE_ADMIN'])",
+ *            "normalisation_context"={"groups"={"get"}},
+ *         },
+ *          "createAdmin"={
+ *          "method"="POST",
+ *          "path"="/users/admin/new",
+ *              "security"="is_granted('ROLE_ADMIN_SYSTEM')", 
+ *               "security_message"="Acces refuse. Seul Admin System peut creer un Admin"
+ *                 },
+ *         "createCaissier"={
+ *          "method"="POST",
+ *          "path"="/users/caissier/new",
+ *              "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", 
+ *              "security_message"="Acces refuse. Seul Admin System ou Admin peut creer un  Caissier"
+ *                 }
+ *             },
+ *     itemOperations={
+ *          "get"={
+ *   "security"="is_granted('ROLE_ADMIN_SYSTEM')",
+ *             "normalisation_context"={"groups"={"get"}}
+ *              },
+ *          "put"={
+ *              "security"="is_granted('ROLE_ADMIN_SYSTEM')",
+ *          "security_message"="Acces refuse. Seul Admin System peut bloquer un Admin ou Caissier"
+ *                   },
+ *          "delete"={"security"="is_granted('ROLE_ADMIN')"}
+ *     }
+ *   
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity(fields={"username"}, message="Cet utilisateur existe déjà")
+ * @UniqueEntity(fields={"email"}, message="Cet utilisateur existe déjà")
  */
-class User implements UserInterface
+class User implements AdvancedUserInterface
 {
     /**
      * @ORM\Id()
@@ -20,39 +60,55 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180)
+     * @ORM\Column(type="string", length=255,  unique=true)
+     * @Assert\NotBlank(message="Le champ ne doit pas être vide")
+     * @Assert\Email(
+     *     message = "Votre Email'{{ value }}' n'est pas un email valide."
+     * )
+     * @Groups("get")
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups("get")
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Groups("get")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le champ ne doit pas être vide")
+     * @Assert\Length(min="2", minMessage="Ce champ doit contenir un minimum de {{ limit }} caractères", max="255", maxMessage="Ce champ doit contenir un maximum de {{ limit }} caractères")
+     *  @Groups("get")
      */
     private $username;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups("get")
      */
     private $isActive;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Profil", inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * * @Groups("get")
+     * @ApiSubresource(maxDepth=1) 
      */
     private $profil;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le champ ne doit pas être vide")
+     * @Assert\Length(min="2", minMessage="Ce champ doit contenir un minimum de {{ limit }} caractères", max="255", maxMessage="Ce champ doit contenir un maximum de {{ limit }} caractères")
+     *  @Groups("get")
      */
     private $login;
 
@@ -100,6 +156,11 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
+    /**
+     * Set the value of roles
+   
+     * @return  self
+     */ 
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
@@ -181,4 +242,18 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function isAccountNonExpired(){
+        return true;
+    }
+     public function isAccountNonLocked(){
+         return true;
+     }
+     public function isCredentialsNonExpired()
+     {
+         return true;
+     }
+     public function isEnabled(){
+         return $this->isActive;
+     }
 }

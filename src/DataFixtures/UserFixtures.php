@@ -16,17 +16,17 @@ class UserFixtures extends Fixture
         $this->encoder = $encoder;
     }
     public function load(ObjectManager $manager)
-    { 
+    {
         $profil = new Profil();
         $profil->setLibelle('supadmin');
         $manager->persist($profil);
         $manager->flush();
-        
+
         $user = new User();
         $user->setUsername('cerv');
         $user->setLogin('admin');
         $user->setProfil($profil);
-        $password=$this->encoder->encodePassword($user,'Admin');
+        $password = $this->encoder->encodePassword($user, 'Admin');
         $user->setPassword($password);
         $user->setRoles(array('ROLE_ADMIN_SYSTEM'));
         $user->setIsActive(true);
