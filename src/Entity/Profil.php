@@ -4,13 +4,14 @@ namespace App\Entity;
 
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProfilRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\RoleRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ProfilRepository")
  * @ApiResource(
  * attributes={"access_control"="is_granted('ROLE_ADMIN')"},
  * subresourceOperations={

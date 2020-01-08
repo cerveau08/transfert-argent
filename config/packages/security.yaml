@@ -3,7 +3,7 @@ security:
         App\Entity\User:
             algorithm: auto
     role_hierarchy:
-        ROLE_SUP_ADMIN: [ROLE_ADMIN, ROLE_CAISSIER, ROLE_USER]
+        ROLE_ADMIN_SYSTEM: [ROLE_ADMIN, ROLE_CAISSIER, ROLE_USER]
         ROLE_ADMIN    : [ROLE_CAISSIER, ROLE_USER]
         ROLE_CAISSIER : [ROLE_USER]       
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers

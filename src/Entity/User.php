@@ -149,11 +149,11 @@ class User implements AdvancedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = [$this->profil->getLibelle()];
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        return array_unique($roles);[$this->userRole->getNameRole()];
     }
 
     /**
