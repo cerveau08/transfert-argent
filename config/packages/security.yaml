@@ -50,3 +50,7 @@ security:
             - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/api, roles: IS_AUTHENTICATED_FULLY  }
             - { path: ^/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY  }
+            - { path: '^/api/users/admin/new', roles: ROLE_ADMIN_SYSTEM }
+            - { path: '^/api/users/admin/{id}', roles: ROLE_ADMIN_SYSTEM }
+            - { path: '^/api/users/caissier/new', roles: ROLE_ADMIN }
+            - { path: '^/api/users/caissier/{id}', roles: ROLE_ADMIN_SYSTEM }

@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  *              "security"="is_granted('ROLE_ADMIN_SYSTEM')", 
  *               "security_message"="Acces refuse. Seul Admin System peut creer un Admin"
  *                 },
- *         "createCaissier"={
+ *          "createCaissier"={
  *          "method"="POST",
  *          "path"="/users/caissier/new",
  *              "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", 
@@ -35,12 +35,20 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  *             },
  *     itemOperations={
  *          "get"={
- *   "security"="is_granted('ROLE_ADMIN_SYSTEM')",
+ *              "security"="is_granted('ROLE_ADMIN_SYSTEM')",
  *             "normalisation_context"={"groups"={"get"}}
  *              },
- *          "put"={
+ *          "bloquerAdmin"={
+ *             "method"="PUT",
+ *             "path"="/users/admin/{id}",
  *              "security"="is_granted('ROLE_ADMIN_SYSTEM')",
- *          "security_message"="Acces refuse. Seul Admin System peut bloquer un Admin ou Caissier"
+ *              "security_message"="Acces refuse. Seul Admin System peut bloquer un Admin"
+ *                   },
+ *          "bloquerCaissier"={
+ *             "method"="PUT",
+ *             "path"="/users/caissier/{id}",
+ *              "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])",
+ *              "security_message"="Acces refuse. Seul Admin System ou un Admin peut bloquer un Caissier"
  *                   },
  *          "delete"={"security"="is_granted('ROLE_ADMIN')"}
  *     }
@@ -149,11 +157,11 @@ class User implements AdvancedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = [$this->profil->getLibelle()];
+        $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);[$this->userRole->getNameRole()];
+        return array_unique($roles);
     }
 
     /**
