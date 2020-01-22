@@ -4,10 +4,16 @@ namespace App\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\UserController;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
@@ -20,6 +26,30 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  *          "get"={"security"="is_granted(['ROLE_ADMIN_ SYSTEM','ROLE_ADMIN'])",
  *            "normalisation_context"={"groups"={"get"}},
  *         },
+ *         "UserImage"={
+ *             "method"="POST",
+ *             "controller"=UserController::class,
+ *             "deserialize"=false,
+ *             "access_control"="is_granted('ROLE_USER')",
+ *             "validation_groups"={"Default", "user_object_create"},
+ *             "openapi_context"={
+ *                 "requestBody"={
+ *                     "content"={
+ *                         "multipart/form-data"={
+ *                             "schema"={
+ *                                 "type"="object",
+ *                                 "properties"={
+ *                                     "file"={
+ *                                         "type"="string",
+ *                                         "format"="binary"
+ *                                     }
+ *                                 }
+ *                             }
+ *                         }
+ *                     }
+ *                 }
+ *             }
+ *          },
  *          "createAdmin"={
  *          "method"="POST",
  *          "path"="/users/admin/new",
@@ -57,6 +87,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"username"}, message="Cet utilisateur existe déjà")
  * @UniqueEntity(fields={"email"}, message="Cet utilisateur existe déjà")
+ * @Vich\Uploadable
  */
 class User implements AdvancedUserInterface
 {
@@ -120,9 +151,39 @@ class User implements AdvancedUserInterface
      */
     private $login;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="caissierAdd")
+     */
+    private $depots;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="adminCreateur")
+     */
+    private $comptes;
+
+     /**
+     * @ORM\Column(type="string", length=255)
+     * @var string
+     */
+    private $imagename;
+
+    /**
+     * @Vich\UploadableField(mapping="product_images", fileNameProperty="image")
+     * @var File
+     */
+    private $imageFile;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     */
+    private $updatedAt;
+
     public function __construct()
     {
         $this->isActive = true;
+        $this->depots = new ArrayCollection();
+        $this->comptes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,6 +191,54 @@ class User implements AdvancedUserInterface
         return $this->id;
     }
 
+    public function getImagename(): ?string
+    {
+        return $this->imagename;
+    }
+
+    public function setImagename(string $imagename): void
+    {
+        $this->imagename = $imagename;
+    }
+
+
+    /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param null | File $imageFile
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        // Only change the updated af if the file is really uploaded to avoid database updates.
+        // This is needed when the file should be set when loading the entity.
+        if ($this->imageFile instanceof UploadedFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+    
     public function getEmail(): ?string
     {
         return $this->email;
@@ -263,5 +372,67 @@ class User implements AdvancedUserInterface
      }
      public function isEnabled(){
          return $this->isActive;
+     }
+
+     /**
+      * @return Collection|Depot[]
+      */
+     public function getDepots(): Collection
+     {
+         return $this->depots;
+     }
+
+     public function addDepot(Depot $depot): self
+     {
+         if (!$this->depots->contains($depot)) {
+             $this->depots[] = $depot;
+             $depot->setCaissierAdd($this);
+         }
+
+         return $this;
+     }
+
+     public function removeDepot(Depot $depot): self
+     {
+         if ($this->depots->contains($depot)) {
+             $this->depots->removeElement($depot);
+             // set the owning side to null (unless already changed)
+             if ($depot->getCaissierAdd() === $this) {
+                 $depot->setCaissierAdd(null);
+             }
+         }
+
+         return $this;
+     }
+
+     /**
+      * @return Collection|Compte[]
+      */
+     public function getComptes(): Collection
+     {
+         return $this->comptes;
+     }
+
+     public function addCompte(Compte $compte): self
+     {
+         if (!$this->comptes->contains($compte)) {
+             $this->comptes[] = $compte;
+             $compte->setAdminCreateur($this);
+         }
+
+         return $this;
+     }
+
+     public function removeCompte(Compte $compte): self
+     {
+         if ($this->comptes->contains($compte)) {
+             $this->comptes->removeElement($compte);
+             // set the owning side to null (unless already changed)
+             if ($compte->getAdminCreateur() === $this) {
+                 $compte->setAdminCreateur(null);
+             }
+         }
+
+         return $this;
      }
 }
