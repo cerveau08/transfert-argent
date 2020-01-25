@@ -3,9 +3,8 @@ security:
         App\Entity\User:
             algorithm: auto
     role_hierarchy:
-        ROLE_ADMIN_SYSTEM: [ROLE_ADMIN, ROLE_CAISSIER, ROLE_USER]
-        ROLE_ADMIN    : [ROLE_CAISSIER, ROLE_USER]
-        ROLE_CAISSIER : [ROLE_USER]       
+        ROLE_ADMIN_SYSTEM: [ROLE_ADMIN, ROLE_CAISSIER]
+        ROLE_ADMIN    : [ROLE_CAISSIER]      
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
@@ -47,10 +46,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     
     access_control:
-            - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+            - { path: ^/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/api, roles: IS_AUTHENTICATED_FULLY  }
             - { path: ^/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY  }
-            - { path: '^/api/users/admin/new', roles: ROLE_ADMIN_SYSTEM }
-            - { path: '^/api/users/admin/{id}', roles: ROLE_ADMIN_SYSTEM }
-            - { path: '^/api/users/caissier/new', roles: ROLE_ADMIN }
-            - { path: '^/api/users/caissier/{id}', roles: ROLE_ADMIN_SYSTEM }
+        

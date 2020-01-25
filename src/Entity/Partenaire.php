@@ -52,9 +52,10 @@ class Partenaire
     private $comptes;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\OneToOne(targetEntity="App\Entity\User", inversedBy="partenaire", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $isActive;
+    private $user;
 
     public function __construct()
     {
@@ -162,14 +163,15 @@ class Partenaire
         return $this->ninea;
     }
 
-    public function getIsActive(): ?bool
+
+    public function getUser(): ?User
     {
-        return $this->isActive;
+        return $this->user;
     }
 
-    public function setIsActive(bool $isActive): self
+    public function setUser(User $user): self
     {
-        $this->isActive = $isActive;
+        $this->user = $user;
 
         return $this;
     }

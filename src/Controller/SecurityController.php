@@ -2,88 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Entity\Profil;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/api")
- */
 class SecurityController extends AbstractController
 {
-   
-     /**
-     * @Route("/users", name="register", methods={"POST"})
+    /**
+     * @Route("/security", name="security")
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function index()
     {
-        $values = json_decode($request->getContent());
-        if(isset($values->username,$values->password)) {
-            $user = new User();
-            if($request->get('profil') !=2){
-            $user->setUsername($values->username);
-            $user->setPassword($passwordEncoder->encodePassword($user, $values->password));
-             // recuperer id profil
-            $repos = $this->getDoctrine()->getRepository(Profil::class);
-            $profils = $repos->find($values->profil);
-            $user->setProfil($profils);
-            $role = [];
-            if ($profils->getLibelle() == "admin") {
-                $role = (["ROLE_ADMIN"]);
-            } elseif ($profils->getLibelle() == "caissier") {
-                $role = (["ROLE_CAISSIER"]);
-            } elseif ($profils->getLibelle() == "supadmin") {
-                $role = (["ROLE_ADMIN_SYSTEM"]);
-            }
-            $user->setRoles($role);
-            /* if(!isset($values->roles))
-                {
-                    $user->setRoles(['ROLE_CAISSIER']);
-                }
-                else
-                {
-                    $user->SetRoles([$values->roles]);
-                }*/
-            $user->setLogin($values->login);
-            $user->setEmail($values->email);
-           
-            $errors = $validator->validate($user);
-            if(count($errors)) {
-                $errors = $serializer->serialize($errors, 'json');
-                return new Response($errors, 500, [
-                    'Content-Type' => 'application/json'
-                ]);
-            }
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            $data = [
-                'status' => 201,
-                'message' => 'L\'utilisateur a été créé'
-            ];
-
-            return new JsonResponse($data, 201);
-        }
-        if($request->get('profil')==2){
-            throw new HttpException(401,'Vous ne pouvez pas creer un admin system');
-        }
-    }
-        $data = [
-            'status' => 500,
-            'message' => 'Vous devez renseigner les clés username et password'
-        ];
-        return new JsonResponse($data, 500);
-        
-    
+        return $this->render('security/index.html.twig', [
+            'controller_name' => 'SecurityController',
+        ]);
     }
 
     /**
