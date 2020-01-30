@@ -5,20 +5,23 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations={
+ *          "post"={"access_control"="is_granted('POST', object)"}
+ *     },
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"username"}, message="Cet utilisateur existe déjà")
  * @UniqueEntity(fields={"email"}, message="Cet utilisateur existe déjà")
@@ -90,6 +93,12 @@ class User implements AdvancedUserInterface
     private $partenaire;
 
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Images", inversedBy="users", cascade={"persist", "remove"})
+     * @ApiProperty(iri="http://schema.org/image")
+     */
+    private $image;
+         
 
     public function __construct()
     {
@@ -130,7 +139,7 @@ class User implements AdvancedUserInterface
      */
     public function getRoles()
     {
-        $roles[] = $this->profil->getLibelle();
+        $roles[] = strtoupper($this->profil->getLibelle());
        return array_unique($roles); 
     }
 
@@ -288,6 +297,18 @@ class User implements AdvancedUserInterface
         if ($partenaire->getUser() !== $this) {
             $partenaire->setUser($this);
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?Images
+    {
+        return $this->image;
+    }
+
+    public function setImage(?Images $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }

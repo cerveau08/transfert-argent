@@ -2,13 +2,27 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use App\Security\Voter\CompteVoter;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * * denormalizationContext={"groups"={"post"}},
+ * collectionOperations={
+ *         "get"={
+ *          "normalization_context"={"groups"={"get"}},},
+ *         "post"={
+ * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM peut creer un user",
+ * "controller"=CompteVoter::class ,}
+ *     },
+ * itemOperations={
+ *     "get"={ 
+ * "security"="is_granted('ROLE_ADMIN_SYSTEM')"},
+ *      "put"={"security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYST peut bloquer un user"}
+ * } )
  * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
  */
 class Compte
