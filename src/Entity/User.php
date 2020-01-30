@@ -9,6 +9,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -94,11 +95,13 @@ class User implements AdvancedUserInterface
 
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Images", inversedBy="users", cascade={"persist", "remove"})
+     * @var MediaObject|null
+     *
+     * @ORM\ManyToOne(targetEntity=MediaObject::class)
+     * @ORM\JoinColumn(nullable=true)
      * @ApiProperty(iri="http://schema.org/image")
      */
-    private $image;
-         
+    public $image;
 
     public function __construct()
     {
@@ -301,7 +304,7 @@ class User implements AdvancedUserInterface
         return $this;
     }
 
-    public function getImage(): ?Images
+   /* public function getImage(): ?Images
     {
         return $this->image;
     }
@@ -311,5 +314,6 @@ class User implements AdvancedUserInterface
         $this->image = $image;
 
         return $this;
-    }
+    } 
+    */
 }

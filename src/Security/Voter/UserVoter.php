@@ -39,7 +39,6 @@ class UserVoter extends Voter
                 // return true or false
                 break;
         }
-
         return false;
     }
 }
