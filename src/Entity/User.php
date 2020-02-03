@@ -15,7 +15,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * @ApiResource(
@@ -28,7 +27,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  * @UniqueEntity(fields={"email"}, message="Cet utilisateur existe déjà")
  * @Vich\Uploadable
  */
-class User implements AdvancedUserInterface
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -210,20 +209,6 @@ class User implements AdvancedUserInterface
         return $this;
     }
 
-
-    public function isAccountNonExpired(){
-        return true;
-    }
-     public function isAccountNonLocked(){
-         return true;
-     }
-     public function isCredentialsNonExpired()
-     {
-         return true;
-     }
-     public function isEnabled(){
-         return $this->isActive;
-     }
 
      /**
       * @return Collection|Depot[]
