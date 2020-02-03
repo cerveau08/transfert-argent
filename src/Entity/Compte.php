@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use App\Security\Voter\CompteVoter;
 use Doctrine\Common\Collections\Collection;
@@ -45,7 +46,7 @@ class Compte
     private $Solde;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $NumeroCompte;
 
@@ -61,14 +62,15 @@ class Compte
     private $partenaire;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comptes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="compte")
      */
-    private $adminCreateur;
+    private $users;
+
     
     public function __construct()
     {
         $this->depot = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -100,12 +102,12 @@ class Compte
         return $this;
     }
 
-    public function getNumeroCompte(): ?int
+    public function getNumeroCompte(): ?string
     {
         return $this->NumeroCompte;
     }
 
-    public function setNumeroCompte(int $NumeroCompte): self
+    public function setNumeroCompte(string $NumeroCompte): self
     {
         $this->NumeroCompte = $NumeroCompte;
 
@@ -155,15 +157,35 @@ class Compte
         return $this;
     }
 
-    public function getAdminCreateur(): ?User
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
     {
-        return $this->adminCreateur;
+        return $this->users;
     }
 
-    public function setAdminCreateur(?User $adminCreateur): self
+    public function addUser(User $user): self
     {
-        $this->adminCreateur = $adminCreateur;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setCompte($this);
+        }
 
         return $this;
     }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getCompte() === $this) {
+                $user->setCompte(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

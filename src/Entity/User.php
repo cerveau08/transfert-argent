@@ -83,17 +83,6 @@ class User implements UserInterface
     private $depots;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="adminCreateur")
-     */
-    private $comptes;
-
-     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Partenaire", mappedBy="user", cascade={"persist", "remove"})
-     */
-    private $partenaire;
-
-
-    /**
      * @var MediaObject|null
      *
      * @ORM\ManyToOne(targetEntity=MediaObject::class)
@@ -102,11 +91,21 @@ class User implements UserInterface
      */
     public $image;
 
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="users")
+     */
+    private $compte;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="user", cascade={"persist", "remove"})
+     */
+    private $partenaire;
+
     public function __construct()
     {
         $this->isActive = true;
         $this->depots = new ArrayCollection();
-        $this->comptes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -241,53 +240,31 @@ class User implements UserInterface
          return $this;
      }
 
-     /**
-      * @return Collection|Compte[]
-      */
-     public function getComptes(): Collection
+
+     public function getCompte(): ?Compte
      {
-         return $this->comptes;
+         return $this->compte;
      }
 
-     public function addCompte(Compte $compte): self
+     public function setCompte(?Compte $compte): self
      {
-         if (!$this->comptes->contains($compte)) {
-             $this->comptes[] = $compte;
-             $compte->setAdminCreateur($this);
-         }
-
-         return $this;
-     }
-
-     public function removeCompte(Compte $compte): self
-     {
-         if ($this->comptes->contains($compte)) {
-             $this->comptes->removeElement($compte);
-             // set the owning side to null (unless already changed)
-             if ($compte->getAdminCreateur() === $this) {
-                 $compte->setAdminCreateur(null);
-             }
-         }
+         $this->compte = $compte;
 
          return $this;
      }
 
      public function getPartenaire(): ?Partenaire
-    {
-        return $this->partenaire;
-    }
+     {
+         return $this->partenaire;
+     }
 
-    public function setPartenaire(Partenaire $partenaire): self
-    {
-        $this->partenaire = $partenaire;
+     public function setPartenaire(?Partenaire $partenaire): self
+     {
+         $this->partenaire = $partenaire;
 
-        // set the owning side of the relation if necessary
-        if ($partenaire->getUser() !== $this) {
-            $partenaire->setUser($this);
-        }
+         return $this;
+     }
 
-        return $this;
-    }
 
    /* public function getImage(): ?Images
     {
