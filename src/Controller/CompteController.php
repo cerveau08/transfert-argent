@@ -114,77 +114,80 @@ class CompteController extends AbstractController
     /**
      * @Route("/compte_PartenaireExistent", name="creation_compte_PartenaireExistent", methods={"POST"})
      */
-    // public function compte_PartenaireExistent(Request $request, EntityManagerInterface $entityManager)
-    // {
-    //     $values = json_decode($request->getContent());
-    //     if(isset($values->ninea,$values->montant))
-    //     {
-    //         // je controle si l'utilisateur a le droit de creer un compte (appel CompteVoter)
-    //         $this->denyAccessUnlessGranted('POST_EDIT',$this->getUser());
-    //         $ReposProprietaire = $this->getDoctrine()->getRepository(User::class);
-    //             // recuperer de l'utilisateur proprietaire du compte
-    //             $proprietaire = $ReposProprietaire->findOneByNinea($values->ninea);
-    //         if ($proprietaire) 
-    //         {
-    //             if ($values->montant > 0) 
-    //             {
-    //                 $dateJours = new \DateTime();
-    //                 $depot = new Depot();
-    //                 $compte = new Compte();
-    //                 #####   COMPTE    ######
+     public function compte_PartenaireExistent(Request $request, EntityManagerInterface $entityManager)
+     {
+         $values = json_decode($request->getContent());
+         if(isset($values->ninea,$values->montant))
+         {
+             // je controle si l'utilisateur a le droit de creer un compte (appel CompteVoter)
+             $this->denyAccessUnlessGranted('POST_EDIT',$this->getUser());
+
+             $proprietaire = new Partenaire();
+             $proprietaire->setNinea($values->ninea);
+             $Repositori = $this->entityManger->getRepository(Partenaire::class);
+                 // recuperer de l'utilisateur proprietaire du compte
+                 $proprietaire = $Repositori->findOneByNinea($values->ninea);
+             if ($proprietaire) 
+             {
+                 if ($values->montant > 0) 
+                 {
+                     $dateJours = new \DateTime();
+                     $depot = new Depot();
+                     $compte = new Compte();
+                     #####   COMPTE    ######
                 
-    //                 // recuperer de l'utilisateur qui cree le compte et y effectue un depot initial
-    //                 $userCreateur = $this->tokenStorage->getToken()->getUser();
+                     // recuperer de l'utilisateur qui cree le compte et y effectue un depot initial
+                     $userCreateur = $this->tokenStorage->getToken()->getUser();
 
-    //                 ####    GENERATION DU NUMERO DE COMPTE  ####
-    //                 $annee = Date('y');
-    //                 $cpt = $this->getLastCopmte();
-    //                 $long = strlen($cpt);
-    //                 $ninea2 = substr($proprietaire->getNinea(), -2);
-    //                 $NumCompte = str_pad("KH".$annee.$ninea2, 11-$long, "0").$cpt;
-    //                 $compte->setNumero($NumCompte);
-    //                 $compte->setSolde($values->montant);
-    //                 $compte->setDateCreation($dateJours);
-    //                 $compte->setUserCreateur($userCreateur);
-    //                 $compte->setProprietaire($proprietaire);
+                     ####    GENERATION DU NUMERO DE COMPTE  ####
+                     $annee = Date('y');
+                     $cpt = $this->getLastCompte();
+                     $long = strlen($cpt);
+                     $ninea2 = substr($proprietaire->getNinea(), -2);
+                     $NumCompte = str_pad("KH".$annee.$ninea2, 11-$long, "0").$cpt;
+                     $compte->setNumeroCompte($NumCompte);
+                     $compte->setSolde($values->montant);
+                     $compte->setDateCreation($dateJours);
+                     $compte->getUsers($userCreateur);
+                     $compte->setPartenaire($proprietaire);
 
-    //                 $entityManager->persist($compte);
-    //                 $entityManager->flush();
-    //                 #####   DEPOT    ######
-    //                 $ReposCompte = $this->getDoctrine()->getRepository(Compte::class);
-    //                 $compteDepos = $ReposCompte->findOneByNumero($NumCompte);
-    //                 $depot->setDateDepot($dateJours);
-    //                 $depot->setMontant($values->montant);
-    //                 $depot->setUserDepot($userCreateur);
-    //                 $depot->setCompte($compteDepos);
+                     $entityManager->persist($compte);
+                     $entityManager->flush();
+                     #####   DEPOT    ######
+                    // $ReposCompte = $this->getDoctrine()->getRepository(Compte::class);
+                    // $compteDepos = $ReposCompte->findOneBynumeroCompte($NumCompte);
+                     $depot->setDateDepot($dateJours);
+                     $depot->setMontant($values->montant);
+                     $depot->setCaissierAdd($userCreateur);
+                     $depot->setCompte($compte);
 
-    //                 $entityManager->persist($depot);
-    //                 $entityManager->flush();
+                     $entityManager->persist($depot);
+                     $entityManager->flush();
 
-//                 $data = [
-    //                     'status' => 201,
-    //                     'message' => 'Le compte du partenaire est bien cree avec un depot initia de: '.$values->montant
-    //                     ];
-    //                 return new JsonResponse($data, 201);
-    //             }
-    //             $data = [
-    //                 'status' => 500,
-    //                 'message' => 'Veuillez saisir un montant de depot valide'
-    //                 ];
-    //                 return new JsonResponse($data, 500);
-    //         }
-    //         $data = [
-    //             'status' => 500,
-    //             'message' => 'Desole le NINEA saisie n est ratache a aucun partenaire'
-    //             ];
-    //             return new JsonResponse($data, 500);
-    //     }
-    //     $data = [
-    //         'status' => 500,
-    //         'message' => 'Vous devez renseigner le ninea du partenaire, le numero de compte ainsi que le montant a deposer'
-    //         ];
-    //         return new JsonResponse($data, 500);
-    // }    
+                  $data = [
+                         'status' => 201,
+                         'message' => 'Le compte du partenaire est bien cree avec un depot initia de: '.$values->montant
+                         ];
+                     return new JsonResponse($data, 201);
+                 }
+                 $data = [
+                     'status' => 500,
+                     'message' => 'Veuillez saisir un montant de depot valide'
+                     ];
+                     return new JsonResponse($data, 500);
+             }
+             $data = [
+                 'status' => 500,
+                 'message' => 'Desole le NINEA saisie n est ratache a aucun partenaire'
+                 ];
+                 return new JsonResponse($data, 500);
+         }
+         $data = [
+             'status' => 500,
+             'message' => 'Vous devez renseigner le ninea du partenaire, le numero de compte ainsi que le montant a deposer'
+             ];
+             return new JsonResponse($data, 500);
+     }    
 
     public function getLastCompte(){
         $ripo = $this->getDoctrine()->getRepository(Compte::class);

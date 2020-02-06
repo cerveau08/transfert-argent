@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Compte;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PartenaireRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
