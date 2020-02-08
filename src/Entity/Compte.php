@@ -66,9 +66,21 @@ class Compte
      */
     private $users;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comptesCreer")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $userCreateur;
+
+    /**
+     * @ORM\Column(type="string", length=255)   
+     */
+    private $statut;
+
     
     public function __construct()
     {
+        $this->statut = "actif";
         $this->depot = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
@@ -184,6 +196,30 @@ class Compte
                 $user->setCompte(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserCreateur(): ?User
+    {
+        return $this->userCreateur;
+    }
+
+    public function setUserCreateur(?User $userCreateur): self
+    {
+        $this->userCreateur = $userCreateur;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): self
+    {
+        $this->statut = $statut;
 
         return $this;
     }

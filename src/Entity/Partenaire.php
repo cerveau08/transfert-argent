@@ -57,6 +57,17 @@ class Partenaire
      */
     private $user;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="partenairesCreer")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $userCreateur;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Contrat", mappedBy="partenaire", cascade={"persist", "remove"})
+     */
+    private $contrat;
+
    
 
 
@@ -190,6 +201,35 @@ class Partenaire
             if ($user->getPartenaire() === $this) {
                 $user->setPartenaire(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getUserCreateur(): ?User
+    {
+        return $this->userCreateur;
+    }
+
+    public function setUserCreateur(?User $userCreateur): self
+    {
+        $this->userCreateur = $userCreateur;
+
+        return $this;
+    }
+
+    public function getContrat(): ?Contrat
+    {
+        return $this->contrat;
+    }
+
+    public function setContrat(Contrat $contrat): self
+    {
+        $this->contrat = $contrat;
+
+        // set the owning side of the relation if necessary
+        if ($contrat->getPartenaire() !== $this) {
+            $contrat->setPartenaire($this);
         }
 
         return $this;

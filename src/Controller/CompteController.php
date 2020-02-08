@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Profil;
 use App\Entity\User;
 use App\Entity\Depot;
 use App\Entity\Compte;
+use App\Entity\Profil;
+use App\Entity\Contrat;
 use App\Entity\Partenaire;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +43,10 @@ class CompteController extends AbstractController
             $depot = new Depot();
             $compte = new Compte();                     
             $user = new User();
-            $partenaire = new Partenaire();                                                             
+            $partenaire = new Partenaire();
+            $contrat =new Contrat();  
+            
+            $userCreateur = $this->tokenStorage->getToken()->getUser();
             // AFFECTATION DES VALEURS AUX DIFFERENTS TABLE
                     #####   USER    ######
             $roleRepo = $this->getDoctrine()->getRepository(Profil::class);
@@ -61,6 +65,7 @@ class CompteController extends AbstractController
             $partenaire->setNomComplet($values->nomComplet);
             $partenaire->setAdresse($values->adresse);
             $partenaire->setTelephone($values->telephone);
+            $partenaire->setUserCreateur($userCreateur);
             // $partenaire->setDateContrat($dateJours);
             // $partenaire->setUsers($user);
 
@@ -75,15 +80,60 @@ class CompteController extends AbstractController
             $numeroCompte = str_pad("MA".$annee.$ninea2, 11-$long, "0").$cpt;
                     #####   COMPTE    ######
             // recuperer de l'utilisateur qui cree le compte et y effectue un depot initial
-            $userCreateur = $this->tokenStorage->getToken()->getUser();
+           
             $compte->setNumeroCompte($numeroCompte);
             $compte->setSolde(0);
             $compte->setDateCreation($dateCreation);
-            $compte->getUsers($userCreateur);
+            $compte->setUserCreateur($userCreateur);
             $compte->setPartenaire($partenaire);  
 
             $entityManager->persist($compte);
             $entityManager->flush();
+
+            $info = "Contrat:Entre les soussignés :
+            Malick Coly et ".$partenaire->getNomComplet().",immatriculé sous le ninea ".$partenaire->getNinea()."
+            du registre commercial ".$partenaire->getRegistreCommercial().",demeurant a ".$partenaire->getAdresse().". Son numéro téléphone est ".$partenaire->getTelephone()."
+            ci-après dénommé le partenariat.";
+             
+            $comptespartenaires = "Les Comptes du Partenaires:".$compte->getNumeroCompte()."
+            
+            Il a été arrêté et convenu ce qui suit :";
+             
+            $article1 = "Article 1 : Engagement
+            Le partenariat a demare à compter du .
+            Le partenaire déclare être, à compter de la date effective de partenariat, libre de tout engagement de nature à faire obstacle à l’exécution du présent contrat.
+             ";
+            $article2 = "Article 2 : Fonctions et attributions
+            Le partenaire est engagé en qualité d’utiliser notre plateforme pour créer des comptes et effectuer des transactions sur ses comptes
+           ";
+            $article3 = "Article 3 : Lieu de travail
+            Le partenaire exercera ses fonctions dans les locaux qui lui convient
+             ";
+            $article4 = "Article 4 : En contrepartie, le partenaire percevra une rémunération sur commission pour chaque transaction effectuée
+            commission Envoi = (frais de transfert X 10)/100
+            commission Retrait = (frais de transfert X 20)/100
+             ";
+            $article5 = "Article 5 : Préavis
+            Chacune des parties a la possibilité de rompre le présent contrat dans les conditions prévues par la loi, sous réserve de respecter le préavis de :
+                • Malick Coly pour le blocage et l’annulation";
+            $signatures = "Fait en double exemplaire au Parcelles Assainies, le .
+            Signature à faire précéder de la mention manuscrite  » lu et approuvé  »
+            Directeur Général de Goukodi,                                    	Le partenaire.
+            ";
+            $contrat->setInformation($info);
+            $contrat->setComptes($comptespartenaires);
+            $contrat->setArticle1($article1);
+            $contrat->setArticle2($article2);
+            $contrat->setArticle3($article3);
+            $contrat->setArticle4($article4);
+            $contrat->setArticle5($article5);
+            $contrat->setSignature($signatures);
+            $contrat->setPartenaire($partenaire);
+            $contrat->setDateCreation($dateCreation);
+            $entityManager->persist($contrat);
+            $entityManager->flush();
+
+
                     #####   DEPOT    ######
             $depot->setDateDepot($dateCreation);
             $depot->setMontant($values->montant);
@@ -150,7 +200,7 @@ class CompteController extends AbstractController
                      $compte->setNumeroCompte($NumCompte);
                      $compte->setSolde($values->montant);
                      $compte->setDateCreation($dateJours);
-                     $compte->getUsers($userCreateur);
+                     $compte->setUserCreateur($userCreateur);
                      $compte->setPartenaire($ninea);
 
                      $entityManager->persist($compte);

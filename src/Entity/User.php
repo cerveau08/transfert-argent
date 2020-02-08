@@ -107,11 +107,23 @@ class User implements UserInterface
      */
     private $transactions;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="userCreateur")
+     */
+    private $comptesCreer;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Partenaire", mappedBy="userCreateur")
+     */
+    private $partenairesCreer;
+
     public function __construct()
     {
         $this->isActive = true;
         $this->depots = new ArrayCollection();
         $this->transactions = new ArrayCollection();
+        $this->comptesCreer = new ArrayCollection();
+        $this->partenairesCreer = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -296,6 +308,68 @@ class User implements UserInterface
              // set the owning side to null (unless already changed)
              if ($transaction->getUserCompteE() === $this) {
                  $transaction->setUserCompteE(null);
+             }
+         }
+
+         return $this;
+     }
+
+     /**
+      * @return Collection|Compte[]
+      */
+     public function getComptesCreer(): Collection
+     {
+         return $this->comptesCreer;
+     }
+
+     public function addComptesCreer(Compte $comptesCreer): self
+     {
+         if (!$this->comptesCreer->contains($comptesCreer)) {
+             $this->comptesCreer[] = $comptesCreer;
+             $comptesCreer->setUserCreateur($this);
+         }
+
+         return $this;
+     }
+
+     public function removeComptesCreer(Compte $comptesCreer): self
+     {
+         if ($this->comptesCreer->contains($comptesCreer)) {
+             $this->comptesCreer->removeElement($comptesCreer);
+             // set the owning side to null (unless already changed)
+             if ($comptesCreer->getUserCreateur() === $this) {
+                 $comptesCreer->setUserCreateur(null);
+             }
+         }
+
+         return $this;
+     }
+
+     /**
+      * @return Collection|Partenaire[]
+      */
+     public function getPartenairesCreer(): Collection
+     {
+         return $this->partenairesCreer;
+     }
+
+     public function addPartenairesCreer(Partenaire $partenairesCreer): self
+     {
+         if (!$this->partenairesCreer->contains($partenairesCreer)) {
+             $this->partenairesCreer[] = $partenairesCreer;
+             $partenairesCreer->setUserCreateur($this);
+         }
+
+         return $this;
+     }
+
+     public function removePartenairesCreer(Partenaire $partenairesCreer): self
+     {
+         if ($this->partenairesCreer->contains($partenairesCreer)) {
+             $this->partenairesCreer->removeElement($partenairesCreer);
+             // set the owning side to null (unless already changed)
+             if ($partenairesCreer->getUserCreateur() === $this) {
+                 $partenairesCreer->setUserCreateur(null);
              }
          }
 
