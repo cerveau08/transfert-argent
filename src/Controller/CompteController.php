@@ -22,9 +22,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class CompteController extends AbstractController
 {
     private $tokenStorage;
-    public function __construct(TokenStorageInterface $tokenStorage)
+    public function __construct(TokenStorageInterface $tokenStorage, EntityManagerInterface $entityManager)
     {
         $this->tokenStorage = $tokenStorage;
+        $this->entityManager = $entityManager;
     }
 
      /** 
@@ -71,11 +72,11 @@ class CompteController extends AbstractController
             $cpt = $this->getLastCompte();
             $long = strlen($cpt);
             $ninea2 = substr($partenaire->getNinea() , -2);
-            $NumeroCompte = str_pad("MA".$annee.$ninea2, 11-$long, "0").$cpt;
+            $numeroCompte = str_pad("MA".$annee.$ninea2, 11-$long, "0").$cpt;
                     #####   COMPTE    ######
             // recuperer de l'utilisateur qui cree le compte et y effectue un depot initial
             $userCreateur = $this->tokenStorage->getToken()->getUser();
-            $compte->setNumeroCompte($NumeroCompte);
+            $compte->setNumeroCompte($numeroCompte);
             $compte->setSolde(0);
             $compte->setDateCreation($dateCreation);
             $compte->getUsers($userCreateur);
@@ -120,14 +121,15 @@ class CompteController extends AbstractController
          if(isset($values->ninea,$values->montant))
          {
              // je controle si l'utilisateur a le droit de creer un compte (appel CompteVoter)
-             $this->denyAccessUnlessGranted('POST_EDIT',$this->getUser());
+            // $this->denyAccessUnlessGranted('POST_EDIT',$this->getUser());
 
-             $proprietaire = new Partenaire();
-             $proprietaire->setNinea($values->ninea);
-             $Repositori = $this->entityManger->getRepository(Partenaire::class);
-                 // recuperer de l'utilisateur proprietaire du compte
-                 $proprietaire = $Repositori->findOneByNinea($values->ninea);
-             if ($proprietaire) 
+             $ninea = new Partenaire();
+             $ninea->setNinea($values->ninea);
+            // dd($values);
+             $repositori = $this->entityManager->getRepository(Partenaire::class);
+             $ninea = $repositori->findOneByNinea($values->ninea);
+            // dd($ninea);
+             if ($ninea) 
              {
                  if ($values->montant > 0) 
                  {
@@ -143,13 +145,13 @@ class CompteController extends AbstractController
                      $annee = Date('y');
                      $cpt = $this->getLastCompte();
                      $long = strlen($cpt);
-                     $ninea2 = substr($proprietaire->getNinea(), -2);
-                     $NumCompte = str_pad("KH".$annee.$ninea2, 11-$long, "0").$cpt;
+                     $ninea2 = substr($ninea->getNinea(), -2);
+                     $NumCompte = str_pad("MA".$annee.$ninea2, 11-$long, "0").$cpt;
                      $compte->setNumeroCompte($NumCompte);
                      $compte->setSolde($values->montant);
                      $compte->setDateCreation($dateJours);
                      $compte->getUsers($userCreateur);
-                     $compte->setPartenaire($proprietaire);
+                     $compte->setPartenaire($ninea);
 
                      $entityManager->persist($compte);
                      $entityManager->flush();

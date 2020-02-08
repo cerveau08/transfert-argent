@@ -43,12 +43,12 @@ class Compte
     /**
      * @ORM\Column(type="integer")
      */
-    private $Solde;
+    private $solde;
 
     /**
      * @ORM\Column(type="string")
      */
-    private $NumeroCompte;
+    private $numeroCompte;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="compte")
@@ -92,24 +92,24 @@ class Compte
 
     public function getSolde(): ?int
     {
-        return $this->Solde;
+        return $this->solde;
     }
 
-    public function setSolde(int $Solde): self
+    public function setSolde(int $solde): self
     {
-        $this->Solde = $Solde;
+        $this->solde = $solde;
 
         return $this;
     }
 
     public function getNumeroCompte(): ?string
     {
-        return $this->NumeroCompte;
+        return $this->numeroCompte;
     }
 
-    public function setNumeroCompte(string $NumeroCompte): self
+    public function setNumeroCompte(string $numeroCompte): self
     {
-        $this->NumeroCompte = $NumeroCompte;
+        $this->numeroCompte = $numeroCompte;
 
         return $this;
     }

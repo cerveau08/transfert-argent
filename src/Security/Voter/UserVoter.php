@@ -32,8 +32,10 @@ class UserVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case 'POST':
-                return $user->getRoles()[0] === 'ROLE_ADMIN' && ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER' || $subject->getProfil()->getLibelle() === 'ROLE_PARTENAIRE');
+                return $user->getRoles()[0] === 'ROLE_ADMIN' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER' || $subject->getProfil()->getLibelle() === 'ROLE_PARTENAIRE');
                 break;
+                
             case 'POST_VIEW':
                 // logic to determine if the user can VIEW
                 // return true or false
