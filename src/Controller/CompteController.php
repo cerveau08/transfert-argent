@@ -90,7 +90,7 @@ class CompteController extends AbstractController
             $entityManager->persist($compte);
             $entityManager->flush();
 
-            $info = "Contrat:Entre les soussignés :
+            $info = "Contrat:Entre les soussignés:
             Malick Coly et ".$partenaire->getNomComplet().",immatriculé sous le ninea ".$partenaire->getNinea()."
             du registre commercial ".$partenaire->getRegistreCommercial().",demeurant a ".$partenaire->getAdresse().". Son numéro téléphone est ".$partenaire->getTelephone()."
             ci-après dénommé le partenariat.";
@@ -115,9 +115,9 @@ class CompteController extends AbstractController
              ";
             $article5 = "Article 5 : Préavis
             Chacune des parties a la possibilité de rompre le présent contrat dans les conditions prévues par la loi, sous réserve de respecter le préavis de :
-                • Malick Coly pour le blocage et l’annulation";
+             • Malick Coly pour le blocage et l’annulation";
             $signatures = "Fait en double exemplaire au Parcelles Assainies, le .
-            Signature à faire précéder de la mention manuscrite  » lu et approuvé  »
+            Signature à faire précéder de la mention manuscrite lu et approuvé
             Directeur Général de Goukodi,                                    	Le partenaire.
             ";
             $contrat->setInformation($info);

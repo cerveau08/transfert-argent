@@ -105,7 +105,12 @@ class User implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="userCompteE")
      */
-    private $transactions;
+    private $transactionE;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="userCompteR")
+     */
+    private $transactionR;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="userCreateur")
@@ -121,7 +126,8 @@ class User implements UserInterface
     {
         $this->isActive = true;
         $this->depots = new ArrayCollection();
-        $this->transactions = new ArrayCollection();
+        $this->transactionE = new ArrayCollection();
+        $this->transactionR = new ArrayCollection();
         $this->comptesCreer = new ArrayCollection();
         $this->partenairesCreer = new ArrayCollection();
     }
@@ -286,25 +292,25 @@ class User implements UserInterface
      /**
       * @return Collection|Transaction[]
       */
-     public function getTransactions(): Collection
+     public function getTransactionE(): Collection
      {
-         return $this->transactions;
+         return $this->transactionE;
      }
 
-     public function addTransaction(Transaction $transaction): self
+     public function addTransactionE(Transaction $transaction): self
      {
-         if (!$this->transactions->contains($transaction)) {
-             $this->transactions[] = $transaction;
+         if (!$this->transactionE->contains($transaction)) {
+             $this->transactionE[] = $transaction;
              $transaction->setUserCompteE($this);
          }
 
          return $this;
      }
 
-     public function removeTransaction(Transaction $transaction): self
+     public function removeTransactionE(Transaction $transaction): self
      {
-         if ($this->transactions->contains($transaction)) {
-             $this->transactions->removeElement($transaction);
+         if ($this->transactionE->contains($transaction)) {
+             $this->transactionE->removeElement($transaction);
              // set the owning side to null (unless already changed)
              if ($transaction->getUserCompteE() === $this) {
                  $transaction->setUserCompteE(null);
@@ -313,6 +319,37 @@ class User implements UserInterface
 
          return $this;
      }
+
+     /**
+      * @return Collection|Transaction[]
+      */
+      public function getTransactionR(): Collection
+      {
+          return $this->transactionR;
+      }
+ 
+      public function addTransactionR(Transaction $transaction): self
+      {
+          if (!$this->transactionR->contains($transaction)) {
+              $this->transactionR[] = $transaction;
+              $transaction->setUserCompteR($this);
+          }
+ 
+          return $this;
+      }
+ 
+      public function removeTransactionR(Transaction $transaction): self
+      {
+          if ($this->transactionR->contains($transaction)) {
+              $this->transactionR->removeElement($transaction);
+              // set the owning side to null (unless already changed)
+              if ($transaction->getUserCompteR() === $this) {
+                  $transaction->setUserCompteR(null);
+              }
+          }
+ 
+          return $this;
+      }
 
      /**
       * @return Collection|Compte[]

@@ -44,7 +44,7 @@ class Transaction
     private $typePieceE;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="bigint")
      */
     private $numeroPieceE;
 
@@ -74,7 +74,7 @@ class Transaction
     private $typePieceR;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="bigint", nullable=true)
      */
     private $numeroPieceR;
 
@@ -109,13 +109,13 @@ class Transaction
     private $status;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="transactions")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="transactionE")
      * @ORM\JoinColumn(nullable=false)
      */
     private $userCompteE;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="transactions")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="transactionR")
      */
     private $userCompteR;
 
