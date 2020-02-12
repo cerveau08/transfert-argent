@@ -55,7 +55,7 @@ class Partenaire
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="partenaire")
      */
-    private $user;
+    private $userComptePartenaire;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="partenairesCreer")
@@ -74,7 +74,7 @@ class Partenaire
     public function __construct()
     {
         $this->comptes = new ArrayCollection();
-        $this->user = new ArrayCollection();
+        $this->userComptePartenaire = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -178,28 +178,28 @@ class Partenaire
     /**
      * @return Collection|User[]
      */
-    public function getUser(): Collection
+    public function getUserComptePartenaire(): Collection
     {
-        return $this->user;
+        return $this->userComptePartenaire;
     }
 
-    public function addUser(User $user): self
+    public function addUserComptepartenaire(User $userComptePartenaire): self
     {
-        if (!$this->user->contains($user)) {
-            $this->user[] = $user;
-            $user->setPartenaire($this);
+        if (!$this->userComptePartenaire->contains($userComptePartenaire)) {
+            $this->userComptePartenaire[] = $userComptePartenaire;
+            $userComptePartenaire->setPartenaire($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeUserComptePartenaire(User $userComptePartenaire): self
     {
-        if ($this->user->contains($user)) {
-            $this->user->removeElement($user);
+        if ($this->userComptePartenaire->contains($userComptePartenaire)) {
+            $this->userComptePartenaire->removeElement($userComptePartenaire);
             // set the owning side to null (unless already changed)
-            if ($user->getPartenaire() === $this) {
-                $user->setPartenaire(null);
+            if ($userComptePartenaire->getPartenaire() === $this) {
+                $userComptePartenaire->setPartenaire(null);
             }
         }
 

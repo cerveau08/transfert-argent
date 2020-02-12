@@ -98,7 +98,7 @@ class User implements UserInterface
     private $compte;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="user", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="userComptePartenaire", cascade={"persist", "remove"})
      */
     private $partenaire;
 
@@ -122,6 +122,11 @@ class User implements UserInterface
      */
     private $partenairesCreer;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Affectation", mappedBy="userComptePartenaire")
+     */
+    private $affectations;
+
     public function __construct()
     {
         $this->isActive = true;
@@ -130,6 +135,7 @@ class User implements UserInterface
         $this->transactionR = new ArrayCollection();
         $this->comptesCreer = new ArrayCollection();
         $this->partenairesCreer = new ArrayCollection();
+        $this->affectations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -407,6 +413,37 @@ class User implements UserInterface
              // set the owning side to null (unless already changed)
              if ($partenairesCreer->getUserCreateur() === $this) {
                  $partenairesCreer->setUserCreateur(null);
+             }
+         }
+
+         return $this;
+     }
+
+     /**
+      * @return Collection|Affectation[]
+      */
+     public function getAffectations(): Collection
+     {
+         return $this->affectations;
+     }
+
+     public function addAffectation(Affectation $affectation): self
+     {
+         if (!$this->affectations->contains($affectation)) {
+             $this->affectations[] = $affectation;
+             $affectation->setUserComptePartenaire($this);
+         }
+
+         return $this;
+     }
+
+     public function removeAffectation(Affectation $affectation): self
+     {
+         if ($this->affectations->contains($affectation)) {
+             $this->affectations->removeElement($affectation);
+             // set the owning side to null (unless already changed)
+             if ($affectation->getUserComptePartenaire() === $this) {
+                 $affectation->setUserComptePartenaire(null);
              }
          }
 

@@ -24,7 +24,7 @@ class UserVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->getRoles()[0] === 'ROLE_ADMIN_SYSTEM')
+        if ($user->getRoles()[0] === 'ROLE_ADMIN_SYSTEM' && $subject->getProfil()->getLibelle() !== 'ROLE_ADMIN_SYSTEM')
         {
             return true;
         }

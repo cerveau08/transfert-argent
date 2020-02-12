@@ -8,7 +8,9 @@ use App\Entity\Compte;
 use App\Entity\Partenaire;
 use App\Entity\Transaction;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,7 +46,7 @@ class TransactionController extends AbstractController
             $transaction->setUserCompteE($userCompteE);
            
 
-            $montantsaisie=$transaction->setMontant($values->montant);
+            $transaction->setMontant($values->montant);
            // dd($montantsaisie);
             // verifier les frais  correspondant au montant
             // recuperer la valeur du frais
@@ -67,6 +69,7 @@ class TransactionController extends AbstractController
             $taxeEtat = $frais * 0.4;
             $commissionSysteme = $frais * 0.3;
             $commissionE = $frais * 0.1;
+            $commissionR = $frais * 0.2;
 
             $valeurEnvoi = $values->montant + $commissionE;
             //dd($valeurEnvoi);
@@ -100,6 +103,7 @@ class TransactionController extends AbstractController
              $transaction->setTaxeEtat($taxeEtat);
              $transaction->setCommissionSysteme($commissionSysteme);
              $transaction->setCommissionE($commissionE);
+             $transaction->setCommisionR($commissionR);
              $transaction->setStatus('envoye');
              $entityManager->persist($transaction);
             $entityManager->flush();
@@ -107,6 +111,73 @@ class TransactionController extends AbstractController
         $data = [
                 'status' => 201,
                 'message' => 'Le compte du partenaire est bien cree avec un depot initia de: '.$values->montant
+            ];
+            return new JsonResponse($data, 201);
+        }
+        $data = [
+            'status' => 500,
+            'message' => 'Vous devez renseigner un login et un passwordet un ninea pour le partenaire, le numero de compte ainsi que le montant a deposer'
+        ];
+        return new JsonResponse($data, 500);
+    }
+
+     /**
+     * @Route("/retrait", name="transaction_retrait", methods={"POST"})
+    */
+    public function retrait(Request $request, EntityManagerInterface $entityManager)
+    {
+        $values = json_decode($request->getContent());
+        if(isset($values->numeroPieceR))
+        {
+            $dateRetrait = new \DateTime();
+            $code = new Transaction(); 
+           /* $codes=$transaction->getCode();
+
+            $code=$trans->findOneBy(['code'=>$codes]);
+                    // var_dump($code); die();
+            //$c=$code->getCode();
+            
+           //var_dump($code->getCommissionRetrait());  die();
+            //var_dump( $this->getUser()->getCompte()->getSolde());  die();
+           dd($code);
+                if(!$code){
+                    return new Response('Ce code est invalide ',Response::HTTP_CREATED);
+                }
+                    $statut=$code->getStatus();
+    
+                    if($code->getCode()==$codes && $statut=="retire" ){
+                        return new Response('Le code est déja retiré',Response::HTTP_CREATED);
+                    }
+                    */
+                   
+             $code->setCode($values->code);
+            // dd($values);
+             $repositori = $this->entityManager->getRepository(Transaction::class);
+             $code = $repositori->findOneByCode($values->code);
+             if(!$code){
+                return new Response('Ce code est invalide ',Response::HTTP_CREATED);
+            }
+
+                if($code->getStatus()=="retire" ){
+                    return new Response('Le code est déja retiré',Response::HTTP_CREATED);
+                }
+            // dd($code);
+            //recuperation du caissier qui envoie
+            $userCompteR = $this->tokenStorage->getToken()->getUser();
+            $code->setUserCompteR($userCompteR);
+            $code->setDateRetrait($dateRetrait);
+            $code->setTypePieceR($values->typePieceR);
+            $code->setNumeroPieceR($values->numeroPieceR);
+            $comptes = $userCompteR->getCompte();
+            $NouveauSolde = ($comptes->getSolde()+$code->getMontant()+$code->getCommisionR());
+            $comptes->setSolde($NouveauSolde);
+             $code->setStatus('retire');
+            $entityManager->persist($code);
+            $entityManager->flush();
+
+        $data = [
+                'status' => 201,
+                'message' => 'Le retrait est fait'
             ];
             return new JsonResponse($data, 201);
         }

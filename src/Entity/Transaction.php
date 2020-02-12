@@ -119,6 +119,17 @@ class Transaction
      */
     private $userCompteR;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="transactionE")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $compteEmetteur;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="transactionR")
+     */
+    private $compteRecepteur;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -360,6 +371,30 @@ class Transaction
     public function setUserCompteR(?User $userCompteR): self
     {
         $this->userCompteR = $userCompteR;
+
+        return $this;
+    }
+
+    public function getCompteEmetteur(): ?Compte
+    {
+        return $this->compteEmetteur;
+    }
+
+    public function setCompteEmetteur(?Compte $compteEmetteur): self
+    {
+        $this->compteEmetteur = $compteEmetteur;
+
+        return $this;
+    }
+
+    public function getCompteRecepteur(): ?Compte
+    {
+        return $this->compteRecepteur;
+    }
+
+    public function setCompteRecepteur(?Compte $compteRecepteur): self
+    {
+        $this->compteRecepteur = $compteRecepteur;
 
         return $this;
     }

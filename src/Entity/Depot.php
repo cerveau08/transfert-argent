@@ -6,7 +6,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations={
+ *          "post"={"access_control"="is_granted('POST', object)"}
+ *     },
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\DepotRepository")
  */
 class Depot
