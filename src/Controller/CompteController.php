@@ -47,8 +47,8 @@ class CompteController extends AbstractController
             $contrat =new Contrat();  
             
             $userCreateur = $this->tokenStorage->getToken()->getUser();
-            // AFFECTATION DES VALEURS AUX DIFFERENTS TABLE
-                    #####   USER    ######
+            
+                  //user  
             $roleRepo = $this->getDoctrine()->getRepository(Profil::class);
             $role = $roleRepo->find($values->profil);
             $user->setEmail($values->email);
@@ -72,13 +72,13 @@ class CompteController extends AbstractController
             $entityManager->persist($partenaire);
             $entityManager->flush();
 
-            ####    GENERATION DU NUMERO DE COMPTE  ####
+            //GENERATION DU NUMERO DE COMPTE  
             $annee = Date('y');
             $cpt = $this->getLastCompte();
             $long = strlen($cpt);
             $ninea2 = substr($partenaire->getNinea() , -2);
             $numeroCompte = str_pad("MA".$annee.$ninea2, 11-$long, "0").$cpt;
-                    #####   COMPTE    ######
+                    //  COMPTE
             // recuperer de l'utilisateur qui cree le compte et y effectue un depot initial
            
             $compte->setNumeroCompte($numeroCompte);

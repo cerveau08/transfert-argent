@@ -29,7 +29,7 @@ class Tarif
     private $borneSup;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $frais;
 
@@ -62,12 +62,12 @@ class Tarif
         return $this;
     }
 
-    public function getFrais(): ?int
+    public function getFrais(): ?string
     {
         return $this->frais;
     }
 
-    public function setFrais(int $frais): self
+    public function setFrais(string $frais): self
     {
         $this->frais = $frais;
 

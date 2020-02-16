@@ -19,6 +19,18 @@ class AffectationRepository extends ServiceEntityRepository
         parent::__construct($registry, Affectation::class);
     }
 
+    public function findCompteAffectTo($value)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.userComptePartenaire = :val')
+            ->setParameter('val', $value)
+            ->orderBy('a.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Affectation[] Returns an array of Affectation objects
     //  */

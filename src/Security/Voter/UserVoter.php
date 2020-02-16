@@ -13,7 +13,7 @@ class UserVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, ['POST', 'DELET'])
+        return in_array($attribute, ['POST', 'GET', 'PUT'])
             && $subject instanceof User;
     }
 
@@ -32,14 +32,65 @@ class UserVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case 'POST':
-                return $user->getRoles()[0] === 'ROLE_ADMIN' && 
-                ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER' || $subject->getProfil()->getLibelle() === 'ROLE_PARTENAIRE');
-                break;
+                 if ($user->getRoles()[0] === 'ROLE_ADMIN' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER' || $subject->getProfil()->getLibelle() === 'ROLE_PARTENAIRE'))
+                {
+                    return true;
+                }
+
+                if ($user->getRoles()[0] === 'ROLE_PARTENAIRE' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_ADMIN_PARTENAIRE' || $subject->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE'))
+                {
+                    return true;
+                }
+
+                if ($user->getRoles()[0] === 'ROLE_ADMIN_PARTENAIRE' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE'))
+                {
+                    return true;
+                }
                 
-            case 'POST_VIEW':
-                // logic to determine if the user can VIEW
-                // return true or false
-                break;
+            break;
+                
+            case 'GET':
+                if ($user->getRoles()[0] === 'ROLE_ADMIN' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER' || $subject->getProfil()->getLibelle() === 'ROLE_PARTENAIRE'))
+                {
+                    return true;
+                }
+
+                if ($user->getRoles()[0] === 'ROLE_PARTENAIRE' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_ADMIN_PARTENAIRE' || $subject->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE'))
+                {
+                    return true;
+                }
+
+                if ($user->getRoles()[0] === 'ROLE_ADMIN_PARTENAIRE' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE'))
+                {
+                    return true;
+                }
+            break;
+
+            case 'PUT':
+                if ($user->getRoles()[0] === 'ROLE_ADMIN' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER' || $subject->getProfil()->getLibelle() === 'ROLE_PARTENAIRE'))
+                {
+                    return true;
+                }
+
+                if ($user->getRoles()[0] === 'ROLE_PARTENAIRE' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_ADMIN_PARTENAIRE' || $subject->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE'))
+                {
+                    return true;
+                }
+
+                if ($user->getRoles()[0] === 'ROLE_ADMIN_PARTENAIRE' && 
+                ($subject->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE'))
+                {
+                    return true;
+                }
+            break;
         }
         return false;
     }

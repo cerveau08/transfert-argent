@@ -8,13 +8,13 @@ use App\Entity\Compte;
 use App\Entity\Partenaire;
 use App\Entity\Transaction;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AffectationRepository;
 use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -32,20 +32,23 @@ class TransactionController extends AbstractController
     /**
      * @Route("/envoie", name="transaction_envoi", methods={"POST"})
     */
-    public function envoi(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $userPasswordEncoder)
+    public function envoi(Request $request, EntityManagerInterface $entityManager, AffectationRepository $repo)
     {
         $values = json_decode($request->getContent());
         if(isset($values->montant,$values->nomCompletE,$values->telephoneE))
         {
             $dateEnvoi = new \DateTime();
-            $compte = new Compte();                     
-            $user = new User();
             $transaction = new Transaction(); 
             //recuperation du caissier qui envoie
             $userCompteE = $this->tokenStorage->getToken()->getUser();
-            $transaction->setUserCompteE($userCompteE);
+            
            
-
+            
+            if($userCompteE->getRoles()[0] === "ROLE_CAISSIER_PARTENAIRE"){
+                $compteEmetteur=$repo->findCompteAffectTo($userCompteE)[0]->getComptes();
+                $transaction->setCompteEmetteur($compteEmetteur);
+            }
+            $transaction->setUserCompteE($userCompteE);
             $transaction->setMontant($values->montant);
            // dd($montantsaisie);
             // verifier les frais  correspondant au montant
@@ -71,19 +74,19 @@ class TransactionController extends AbstractController
             $commissionE = $frais * 0.1;
             $commissionR = $frais * 0.2;
 
-            $valeurEnvoi = $values->montant + $commissionE;
+            $valeurEnvoi = $values->montant + $frais - $commissionE;
             //dd($valeurEnvoi);
             //Verifier le montant dispo
-            $comptes = $userCompteE->getCompte();
+           
             // var_dump($comptes); die();
-            if ($valeurEnvoi >= $comptes->getSolde()) {
+            if ($valeurEnvoi >= $compteEmetteur->getSolde()) {
                 return $this->json([
-                    'message1' => 'votre solde( ' . $comptes->getSolde() . ' ) ne vous permez pas d\'effectuer cette transaction'
+                    'message1' => 'votre solde( ' . $compteEmetteur->getSolde() . ' ) ne vous permez pas d\'effectuer cette transaction'
                 ]);
             }
 
-            $NouveauSolde = ($comptes->getSolde()-$values->montant+$commissionE);
-            $comptes->setSolde($NouveauSolde);
+            $NouveauSolde = ($compteEmetteur->getSolde()-$valeurEnvoi);
+            $compteEmetteur->setSolde($NouveauSolde);
 
              //creation du code de transaction
              $m = "GO";
@@ -101,6 +104,7 @@ class TransactionController extends AbstractController
              $transaction->setNomCompletR($values->nomCompletR); 
              $transaction->setDateEnvoi($dateEnvoi);
              $transaction->setTaxeEtat($taxeEtat);
+
              $transaction->setCommissionSysteme($commissionSysteme);
              $transaction->setCommissionE($commissionE);
              $transaction->setCommisionR($commissionR);
@@ -110,13 +114,13 @@ class TransactionController extends AbstractController
 
         $data = [
                 'status' => 201,
-                'message' => 'Le compte du partenaire est bien cree avec un depot initia de: '.$values->montant
+                'message' => 'vous avez envoyer '.$values->montant + $frais.' a '.$values->nomCompletR.'.Code de transaction '.$codes
             ];
             return new JsonResponse($data, 201);
         }
         $data = [
             'status' => 500,
-            'message' => 'Vous devez renseigner un login et un passwordet un ninea pour le partenaire, le numero de compte ainsi que le montant a deposer'
+            'message' => 'Vous devez rensseigner tous les champs'
         ];
         return new JsonResponse($data, 500);
     }
@@ -124,7 +128,7 @@ class TransactionController extends AbstractController
      /**
      * @Route("/retrait", name="transaction_retrait", methods={"POST"})
     */
-    public function retrait(Request $request, EntityManagerInterface $entityManager)
+    public function retrait(Request $request, EntityManagerInterface $entityManager, AffectationRepository $repo)
     {
         $values = json_decode($request->getContent());
         if(isset($values->numeroPieceR))
@@ -162,15 +166,19 @@ class TransactionController extends AbstractController
                     return new Response('Le code est déja retiré',Response::HTTP_CREATED);
                 }
             // dd($code);
-            //recuperation du caissier qui envoie
+            //recuperation du caissier qui fait le retrait
             $userCompteR = $this->tokenStorage->getToken()->getUser();
+
+            if($userCompteR->getRoles()[0] === "ROLE_CAISSIER_PARTENAIRE"){
+                $compteRecepteur=$repo->findCompteAffectTo($userCompteR)[0]->getComptes();
+                $code->setCompteRecepteur($compteRecepteur);
+            }
             $code->setUserCompteR($userCompteR);
             $code->setDateRetrait($dateRetrait);
             $code->setTypePieceR($values->typePieceR);
             $code->setNumeroPieceR($values->numeroPieceR);
-            $comptes = $userCompteR->getCompte();
-            $NouveauSolde = ($comptes->getSolde()+$code->getMontant()+$code->getCommisionR());
-            $comptes->setSolde($NouveauSolde);
+            $NouveauSolde = ($compteRecepteur->getSolde()+$code->getMontant()+$code->getCommisionR());
+            $compteRecepteur->setSolde($NouveauSolde);
              $code->setStatus('retire');
             $entityManager->persist($code);
             $entityManager->flush();
@@ -183,7 +191,7 @@ class TransactionController extends AbstractController
         }
         $data = [
             'status' => 500,
-            'message' => 'Vous devez renseigner un login et un passwordet un ninea pour le partenaire, le numero de compte ainsi que le montant a deposer'
+            'message' => 'Vous devez renseigner tous les champs'
         ];
         return new JsonResponse($data, 500);
     }

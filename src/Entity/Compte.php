@@ -61,10 +61,6 @@ class Compte
      */
     private $partenaire;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="compte")
-     */
-    private $users;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comptesCreer")
@@ -187,37 +183,7 @@ class Compte
         return $this;
     }
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->setCompte($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
-            // set the owning side to null (unless already changed)
-            if ($user->getCompte() === $this) {
-                $user->setCompte(null);
-            }
-        }
-
-        return $this;
-    }
-
+   
     public function getUserCreateur(): ?User
     {
         return $this->userCreateur;

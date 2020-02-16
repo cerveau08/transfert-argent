@@ -92,10 +92,6 @@ class User implements UserInterface
     public $image;
 
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="users")
-     */
-    private $compte;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="userComptePartenaire", cascade={"persist", "remove"})
@@ -270,18 +266,6 @@ class User implements UserInterface
          return $this;
      }
 
-
-     public function getCompte(): ?Compte
-     {
-         return $this->compte;
-     }
-
-     public function setCompte(?Compte $compte): self
-     {
-         $this->compte = $compte;
-
-         return $this;
-     }
 
      public function getPartenaire(): ?Partenaire
      {
