@@ -45,8 +45,9 @@ class TransactionController extends AbstractController
            
             
             if($userCompteE->getRoles()[0] === "ROLE_CAISSIER_PARTENAIRE"){
-                $compteEmetteur=$repo->findCompteAffectTo($userCompteE)[0]->getComptes();
+                $compteEmetteur=$repo->findCompteAffectTo($userCompteE)[0]->getCompte();
                 $transaction->setCompteEmetteur($compteEmetteur);
+               // dd($compteEmetteur);
             }
             $transaction->setUserCompteE($userCompteE);
             $transaction->setMontant($values->montant);
@@ -66,7 +67,7 @@ class TransactionController extends AbstractController
                 }
                 
             }
-            
+           // dd($frais);
            // $total = $montantsaisie + $frais;
             // repartition des commissions 
             $taxeEtat = $frais * 0.4;
@@ -87,7 +88,7 @@ class TransactionController extends AbstractController
 
             $NouveauSolde = ($compteEmetteur->getSolde()-$valeurEnvoi);
             $compteEmetteur->setSolde($NouveauSolde);
-
+            //dd($NouveauSolde);
              //creation du code de transaction
              $m = "GO";
              $a = rand(1000, 9999);
@@ -110,6 +111,7 @@ class TransactionController extends AbstractController
              $transaction->setCommisionR($commissionR);
              $transaction->setStatus('envoye');
              $entityManager->persist($transaction);
+            // dd($transaction);
             $entityManager->flush();
 
         $data = [
@@ -170,7 +172,7 @@ class TransactionController extends AbstractController
             $userCompteR = $this->tokenStorage->getToken()->getUser();
 
             if($userCompteR->getRoles()[0] === "ROLE_CAISSIER_PARTENAIRE"){
-                $compteRecepteur=$repo->findCompteAffectTo($userCompteR)[0]->getComptes();
+                $compteRecepteur=$repo->findCompteAffectTo($userCompteR)[0]->getCompte();
                 $code->setCompteRecepteur($compteRecepteur);
             }
             $code->setUserCompteR($userCompteR);

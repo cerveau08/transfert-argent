@@ -40,6 +40,12 @@ class Affectation
      */
     private $compte;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="UserAffectes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $UserQuiAffecte;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +95,18 @@ class Affectation
     public function setCompte(?Compte $compte): self
     {
         $this->compte = $compte;
+
+        return $this;
+    }
+
+    public function getUserQuiAffecte(): ?User
+    {
+        return $this->UserQuiAffecte;
+    }
+
+    public function setUserQuiAffecte(?User $UserQuiAffecte): self
+    {
+        $this->UserQuiAffecte = $UserQuiAffecte;
 
         return $this;
     }

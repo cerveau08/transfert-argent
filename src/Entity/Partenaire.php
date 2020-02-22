@@ -9,61 +9,61 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/**
+/** 
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\PartenaireRepository")
  */
 class Partenaire
 {
-    /**
+    /** 
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
 
-    /**
+    /** 
      * @ORM\Column(type="string", length=255)
      */
     private $nomComplet;
 
-    /**
+    /** 
      * @ORM\Column(type="string", length=255)
      */
     private $ninea;
 
-    /**
+    /** 
      * @ORM\Column(type="string", length=255)
      */
     private $registreCommercial;
 
-    /**
+    /** 
      * @ORM\Column(type="string", length=255)
      */
     private $adresse;
 
-    /**
+    /** 
      * @ORM\Column(type="string", length=255)
      */
     private $telephone;
 
-    /**
+    /** 
      * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="partenaire")
      */
     private $comptes;
 
-    /**
+    /** 
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="partenaire")
      */
     private $userComptePartenaire;
 
-    /**
+    /** 
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="partenairesCreer")
      * @ORM\JoinColumn(nullable=false)
      */
     private $userCreateur;
 
-    /**
+    /** 
      * @ORM\OneToOne(targetEntity="App\Entity\Contrat", mappedBy="partenaire", cascade={"persist", "remove"})
      */
     private $contrat;
@@ -142,7 +142,7 @@ class Partenaire
         return $this;
     }
 
-    /**
+    /** 
      * @return Collection|Compte[]
      */
     public function getComptes(): Collection
@@ -189,8 +189,7 @@ class Partenaire
             $this->userComptePartenaire[] = $userComptePartenaire;
             $userComptePartenaire->setPartenaire($this);
         }
-
-        return $this;
+return $this;
     }
 
     public function removeUserComptePartenaire(User $userComptePartenaire): self
@@ -233,8 +232,6 @@ class Partenaire
         }
 
         return $this;
-    }
-
-   
+    }   
 
 }

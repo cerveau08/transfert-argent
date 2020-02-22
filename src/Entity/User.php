@@ -123,6 +123,11 @@ class User implements UserInterface
      */
     private $affectations;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Affectation", mappedBy="UserQuiAffecte")
+     */
+    private $UserAffectes;
+
     public function __construct()
     {
         $this->isActive = true;
@@ -132,6 +137,7 @@ class User implements UserInterface
         $this->comptesCreer = new ArrayCollection();
         $this->partenairesCreer = new ArrayCollection();
         $this->affectations = new ArrayCollection();
+        $this->UserAffectes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -428,6 +434,37 @@ class User implements UserInterface
              // set the owning side to null (unless already changed)
              if ($affectation->getUserComptePartenaire() === $this) {
                  $affectation->setUserComptePartenaire(null);
+             }
+         }
+
+         return $this;
+     }
+
+     /**
+      * @return Collection|Affectation[]
+      */
+     public function getUserAffectes(): Collection
+     {
+         return $this->UserAffectes;
+     }
+
+     public function addUserAffecte(Affectation $userAffecte): self
+     {
+         if (!$this->UserAffectes->contains($userAffecte)) {
+             $this->UserAffectes[] = $userAffecte;
+             $userAffecte->setUserQuiAffecte($this);
+         }
+
+         return $this;
+     }
+
+     public function removeUserAffecte(Affectation $userAffecte): self
+     {
+         if ($this->UserAffectes->contains($userAffecte)) {
+             $this->UserAffectes->removeElement($userAffecte);
+             // set the owning side to null (unless already changed)
+             if ($userAffecte->getUserQuiAffecte() === $this) {
+                 $userAffecte->setUserQuiAffecte(null);
              }
          }
 

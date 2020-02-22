@@ -27,9 +27,12 @@ class AffectationVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
-            case 'POST_EDIT':
-                // logic to determine if the user can EDIT
-                // return true or false
+            case 'POST':
+                if (($user->getRoles()[0] === 'ROLE_PARTENAIRE' || $user->getRoles()[0] === 'ROLE_ADMIN_PARTENAIRE') &&
+                ($subject->getUserComptePartenaire()->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE'))
+                {
+                    return true;
+                }
                 break;
             case 'POST_VIEW':
                 // logic to determine if the user can VIEW
