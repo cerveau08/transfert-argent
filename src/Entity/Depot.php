@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ApiResource(
  * collectionOperations={
- *          "post"={"access_control"="is_granted('POST', object)"}
+ *          "post"={"security"="is_granted(['ROLE_ADMIN_SYST','ROLE_ADMIN','ROLE_CAISSIER'])", "security_message"="Seul ADMIN_SYST peut creer un user"}
  *     },
  * )
  * @ORM\Entity(repositoryClass="App\Repository\DepotRepository")
@@ -43,6 +43,10 @@ class Depot
      * @ORM\JoinColumn(nullable=false)
      */
     private $caissierAdd;
+    public function __construct()
+    {
+        $this->dateDepot=  new \DateTime();
+    }
 
     public function getId(): ?int
     {

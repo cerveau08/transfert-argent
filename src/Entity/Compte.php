@@ -97,6 +97,7 @@ class Compte
         $this->affectations = new ArrayCollection();
         $this->transactionE = new ArrayCollection();
         $this->transactionR = new ArrayCollection();
+        $this->dateCreation=  new \DateTime();
     }
 
     public function getId(): ?int

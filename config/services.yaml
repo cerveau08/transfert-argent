@@ -30,3 +30,6 @@ services:
         arguments: [ '@request_stack' ]
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+    App\DataPersister\DepotDataPersister: ~
+        # Uncomment only if autoconfiguration is disabled
+        #tags: [ 'api_platform.data_persister' ]

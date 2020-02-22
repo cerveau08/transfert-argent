@@ -29,7 +29,7 @@ class AffectationDataPersister implements ContextAwareDataPersisterInterface
     public function persist($data, array $context = [])
     {
        
-                $userConect=$this->tokenStorage->getToken()->getUser();
+        $userConect=$this->tokenStorage->getToken()->getUser();
         $userPartenaire=$userConect->getPartenaire();
         
         $userRoles=$userConect->getRoles()[0];

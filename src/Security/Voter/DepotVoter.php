@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Compte;
 use App\Entity\Depot;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,7 +15,7 @@ class DepotVoter extends Voter
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
         return in_array($attribute, ['POST_EDIT', 'POST_VIEW'])
-            && $subject instanceof Depot;
+            && $subject instanceof Compte;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
