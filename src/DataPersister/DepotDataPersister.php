@@ -7,17 +7,14 @@ use App\Entity\Depot;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class DepotDataPersister implements ContextAwareDataPersisterInterface
 {
     
     private $entityManager;
-    private $userPasswordEncoder;
-    public function __construct(EntityManagerInterface $entityManager,TokenStorageInterface $tokenStorage,UserPasswordEncoderInterface $userPasswordEncoder)
+    public function __construct(EntityManagerInterface $entityManager,TokenStorageInterface $tokenStorage)
     {
-        $this->userPasswordEncoder = $userPasswordEncoder;
         $this->entityManager = $entityManager;
         $this->tokenStorage = $tokenStorage;
         

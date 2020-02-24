@@ -64,8 +64,7 @@ class TransactionController extends AbstractController
 
                 if ($values->montant >= $value->getBorneInf() &&  $values->montant <= $value->getBorneSup()) {
                     $frais = $value->getFrais();
-                }
-                
+                }  
             }
            // dd($frais);
            // $total = $montantsaisie + $frais;

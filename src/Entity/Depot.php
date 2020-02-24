@@ -2,13 +2,16 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 /**
  * @ApiResource(
- *  normalizationContext={"groups"={"read"}},
- *  denormalizationContext={"groups"={"post"}},
+ *   attributes = { 
+* "denormalization_context" = {"groups" = {"post"}}, 
+* "normalization_context" = {"groups" = {"read"}, " enable_max_depth "= true}, 
+*" force_eager "= false },
  * collectionOperations={
  *          "post"={"security"="is_granted(['ROLE_ADMIN_SYST','ROLE_ADMIN','ROLE_CAISSIER'])", "security_message"="Seul ADMIN_SYST peut creer un user"}
  *     },
@@ -27,12 +30,14 @@ class Depot
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"post","read"})
+     * @MaxDepth (1) 
      */
     private $dateDepot;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"post","read"})
+     * @MaxDepth (1) 
      */
     private $montant;
 
@@ -40,6 +45,7 @@ class Depot
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="depot")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"post","read"})
+     * @MaxDepth (1) 
      */
     private $compte;
 
@@ -47,6 +53,7 @@ class Depot
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="depots")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"post","read"})
+     * @MaxDepth (1) 
      */
     private $caissierAdd;
     public function __construct()

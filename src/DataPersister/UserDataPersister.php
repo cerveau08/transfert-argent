@@ -42,19 +42,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
         }
                 $data->setPassword($this->userPasswordEncoder->encodePassword($data, $data->getPassword()));
                 $data->eraseCredentials();
-/*
-                $partenaire =  $this->entityManager->getRepository(User::class);
-                $partenaireid  =  $partenaire->find($data->getId());
-                dd($partenaireid);
-               // $partenaire = $this->userRepository->find($this->id);
-               // $res = $this->userRepository->findBy(array("partenaire" => $partenaire->getPartenaire()));
-               if($partenaireid->getRoles([0]) == "ROLE_PARTENAIRE"){
-                foreach ($partenaireid as $tt){
-                        $tt->getPartenaire();
-                        $tt->setIsActive(false);
-                        $this->entityManager->persist($tt);
-                } 
-                */
+
                     
                 $this->entityManager->persist($data);
                 $this->entityManager->flush();

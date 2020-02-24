@@ -48,13 +48,16 @@ class TransactionRepository extends ServiceEntityRepository
     }
     */
 
-    public function findOneByCode($value): ?Transaction
+    public function findOneByCode($code)
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.code = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryBuilder = $this->_em->createQueryBuilder()
+           ->select('t')
+           ->from(Transaction::class, 't')
+           ->where('t.code = :code')
+           ->setParameter('code', $code);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getOneOrNullResult();
     }
 }
