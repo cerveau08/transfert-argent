@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
+ *  normalizationContext={"groups"={"read"}},
+ *  denormalizationContext={"groups"={"post"}},
  * collectionOperations={
  *          "post"={"security"="is_granted(['ROLE_ADMIN_SYST','ROLE_ADMIN','ROLE_CAISSIER'])", "security_message"="Seul ADMIN_SYST peut creer un user"}
  *     },
@@ -24,23 +26,27 @@ class Depot
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"post","read"})
      */
     private $dateDepot;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $montant;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="depot")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post","read"})
      */
     private $compte;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="depots")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post","read"})
      */
     private $caissierAdd;
     public function __construct()

@@ -4,20 +4,21 @@ namespace App\Entity;
 
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Security\Voter\CompteVoter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- * * denormalizationContext={"groups"={"post"}},
+ *  normalizationContext={"groups"={"read"}},
+ *  denormalizationContext={"groups"={"post"}},
  * collectionOperations={
  *         "get"={
  *          "normalization_context"={"groups"={"get"}},},
  *         "post"={
- * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM peut creer un user",
- * "controller"=CompteVoter::class ,}
+ * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM peut creer un user"
+ * }
  *     },
  * itemOperations={
  *     "get"={ 
@@ -37,27 +38,32 @@ class Compte
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"post","read"})
      */
     private $dateCreation;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $solde;
 
     /**
      * @ORM\Column(type="string")
+     * @Groups({"post","read"})
      */
     private $numeroCompte;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="compte")
+     * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="compte", cascade={"persist", "remove"})
+     * @Groups({"post","read"})
      */
     private $depot;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="comptes")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="comptes", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post","read"})
      */
     private $partenaire;
 
@@ -65,11 +71,13 @@ class Compte
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comptesCreer")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post","read"})
      */
     private $userCreateur;
 
     /**
-     * @ORM\Column(type="string", length=255)   
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})   
      */
     private $statut;
 

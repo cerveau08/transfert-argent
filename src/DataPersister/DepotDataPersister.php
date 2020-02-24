@@ -10,7 +10,7 @@ use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class UserDataPersister implements ContextAwareDataPersisterInterface
+class DepotDataPersister implements ContextAwareDataPersisterInterface
 {
     
     private $entityManager;

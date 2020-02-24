@@ -4,13 +4,19 @@ namespace App\Entity;
 
 use App\Entity\Compte;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\PartenaireRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /** 
- * @ApiResource()
+ * @ApiResource(
+ *  normalizationContext={"groups"={"read"}},
+ *  denormalizationContext={"groups"={"post"}},
+ * collectionOperations={
+ *          "post"={"access_control"="is_granted('POST', object)"}
+ *     },
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\PartenaireRepository")
  */
 class Partenaire
@@ -24,36 +30,43 @@ class Partenaire
 
     /** 
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $nomComplet;
 
     /** 
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $ninea;
 
     /** 
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $registreCommercial;
 
     /** 
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $adresse;
 
     /** 
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $telephone;
 
     /** 
      * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="partenaire")
+     * @Groups({"post","read"})
      */
     private $comptes;
 
     /** 
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="partenaire")
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="partenaire", cascade={"persist"})
+     * @Groups({"post","read"})
      */
     private $userComptePartenaire;
 
@@ -65,6 +78,7 @@ class Partenaire
 
     /** 
      * @ORM\OneToOne(targetEntity="App\Entity\Contrat", mappedBy="partenaire", cascade={"persist", "remove"})
+     * @Groups({"post","read"})
      */
     private $contrat;
 

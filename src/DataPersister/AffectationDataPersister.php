@@ -38,8 +38,6 @@ class AffectationDataPersister implements ContextAwareDataPersisterInterface
             $data->setUserQuiAffecte($userPartenaire);
         }
                 
-                $data->eraseCredentials();
-                
                 $this->entityManager->persist($data);
                 $this->entityManager->flush();
       

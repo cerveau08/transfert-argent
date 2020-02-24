@@ -18,6 +18,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ApiResource(
+ *   normalizationContext={"groups"={"read"}},
+ *  denormalizationContext={"groups"={"post"}},
  * collectionOperations={
  *          "post"={"access_control"="is_granted('POST', object)"}
  *     },
@@ -42,7 +44,7 @@ class User implements UserInterface
      * @Assert\Email(
      *     message = "Votre Email'{{ value }}' n'est pas un email valide."
      * )
-     * @Groups("get")
+     * @Groups({"post","read"})
      */
     private $email;
 
@@ -50,7 +52,7 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Groups("get")
+     * @Groups({"post","read"})
      */
     private $password;
 
@@ -58,20 +60,20 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le champ ne doit pas être vide")
      * @Assert\Length(min="2", minMessage="Ce champ doit contenir un minimum de {{ limit }} caractères", max="255", maxMessage="Ce champ doit contenir un maximum de {{ limit }} caractères")
-     * @Groups("get")
+     * @Groups({"post","read"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups("get")
+     * @Groups({"post","read"})
      */
     private $isActive;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Profil", inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups("get")
+     * @Groups({"post","read"})
      * @ApiSubresource(maxDepth=1) 
      */
     private $profil;
@@ -79,6 +81,7 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="caissierAdd")
+     * @Groups({"post","read"})
      */
     private $depots;
 

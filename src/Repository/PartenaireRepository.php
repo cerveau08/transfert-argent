@@ -37,14 +37,17 @@ class PartenaireRepository extends ServiceEntityRepository
     */
 
     
-    public function findOneByNinea($value): ?Partenaire
+    public function findOneByNinea($ninea)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.ninea = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryBuilder = $this->_em->createQueryBuilder()
+           ->select('p')
+           ->from(Partenaire::class, 'p')
+           ->where('p.ninea = :ninea')
+           ->setParameter('ninea', $ninea);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getOneOrNullResult();
     }
 
 }
