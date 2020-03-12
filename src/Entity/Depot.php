@@ -24,6 +24,7 @@ class Depot
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $id;
 
@@ -35,7 +36,7 @@ class Depot
     private $dateDepot;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer")
      * @Groups({"post","read"})
      * @MaxDepth (1) 
      */

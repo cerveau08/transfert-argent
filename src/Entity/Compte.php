@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\CompteController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,14 +17,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *  denormalizationContext={"groups"={"post"}},
  * collectionOperations={
  *         "get"={
- *          "normalization_context"={"groups"={"get"}},},
+ *  "controller"=CompteController::class},
  *         "post"={
- * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM peut creer un user"
+ * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM ou ADMIN peut creer un compte"
  * }
  *     },
  * itemOperations={
  *     "get"={ 
- * "security"="is_granted('ROLE_ADMIN_SYSTEM')"},
+ * "security"="is_granted(['ROLE_ADMIN_SYSTEM', 'ROLE_ADMIN', 'ROLE_PARTENAIRE', 'ROLE_ADMIN_PARTENAIRE'])"},
  *      "put"={"security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYST peut bloquer un user"}
  * } )
  * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
@@ -34,6 +35,7 @@ class Compte
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $id;
 

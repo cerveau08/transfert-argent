@@ -35,7 +35,17 @@ class PartenaireRepository extends ServiceEntityRepository
         ;
     }
     */
-
+    public function ListCompteToPartenaire($id)
+    {
+        $queryBuilder = $this->_em->createQueryBuilder()
+                            ->select('p')
+                            ->from(Partenaire::class, 'p')
+                            ->where('p.id = :id')
+                            ->setParameter('id', $id);
+                            $query = $queryBuilder->getQuery();
+     
+        return $query->getOneOrNullResult();
+    }
     
     public function findOneByNinea($ninea)
     {

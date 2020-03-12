@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use DateTime;
+use App\Entity\Partenaire;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @ApiResource()
@@ -33,41 +36,6 @@ class Contrat
      * @ORM\JoinColumn(nullable=false)
      */
     private $partenaire;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $comptes;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $article1;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $article2;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $article3;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $article4;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $article5;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $signature;
 
     
 
@@ -112,88 +80,20 @@ class Contrat
         return $this;
     }
 
-    public function getComptes(): ?string
-    {
-        return $this->comptes;
-    }
+    public function genContrat($data,$termes){
 
-    public function setComptes(string $comptes): self
-    {
-        $this->comptes = $comptes;
+        //id  partenaire (on a id partenaire si le partenaire existe)
+        $rc=$data->getRegistreCommercial();
+        $nin=$data->getNinea();
+        $nom=$data->getNomComplet();
+        $date=new DateTime();
+        $dates=$date->format("d-m-Y");
+        $word = ["rco", "ninea", "nom","date"];
+        $replace   = [$rc, $nin, $nom,$dates];
 
-        return $this;
-    }
-
-    public function getArticle1(): ?string
-    {
-        return $this->article1;
-    }
-
-    public function setArticle1(string $article1): self
-    {
-        $this->article1 = $article1;
-
-        return $this;
-    }
-
-    public function getArticle2(): ?string
-    {
-        return $this->article2;
-    }
-
-    public function setArticle2(string $article2): self
-    {
-        $this->article2 = $article2;
-
-        return $this;
-    }
-
-    public function getArticle3(): ?string
-    {
-        return $this->article3;
-    }
-
-    public function setArticle3(string $article3): self
-    {
-        $this->article3 = $article3;
-
-        return $this;
-    }
-
-    public function getArticle4(): ?string
-    {
-        return $this->article4;
-    }
-
-    public function setArticle4(string $article4): self
-    {
-        $this->article4 = $article4;
-
-        return $this;
-    }
-
-    public function getArticle5(): ?string
-    {
-        return $this->article5;
-    }
-
-    public function setArticle5(string $article5): self
-    {
-        $this->article5 = $article5;
-
-        return $this;
-    }
-
-    public function getSignature(): ?string
-    {
-        return $this->signature;
-    }
-
-    public function setSignature(string $signature): self
-    {
-        $this->signature = $signature;
-
-        return $this;
+        $contrat = str_replace($word, $replace, $termes);   
+        $response = new JsonResponse($contrat);
+        return $response;
     }
 
 }

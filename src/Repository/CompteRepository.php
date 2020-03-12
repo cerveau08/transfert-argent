@@ -35,6 +35,15 @@ class CompteRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function getAccountPart($id){
+        return $this->createQueryBuilder('c')
+        ->andWhere('c.partenaire = :id')
+        ->select('c.id')
+        ->orderBy('c.id', 'ASC')
+        ->setParameter('id', $id)
+        ->getQuery()
+        ->getResult();
+    }
 
     
     public function findOneByNumeroCompte($value): ?Compte

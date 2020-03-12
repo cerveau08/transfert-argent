@@ -6,7 +6,34 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * 
+ * normalizationContext={
+ *         "groups"={"read"}
+ *     },
+ * denormalizationContext={
+ *         "groups"={"post"}
+ *     },
+ * collectionOperations={
+ *          "get"={"security"="is_granted('ROLE_ADMIN_PARTENAIRE')",
+ *             "security_message" = "Acces Refuse. Vous n'avez pas ce droit",
+ *          
+ *         },
+ * 
+ *        "post"={ 
+ *        "controller"=AffectationController::class,
+ *         }
+ *             },
+ *     itemOperations={
+ *          "get"={
+ *   "security"="is_granted('ROLE_ADMIN_PARTENAIRE')",
+ *           "security_message" = "Acces Refuse. Vous n'avez pas ce droit",
+ *              },
+ *        "put"={
+ *        "controller"=AffectationController::class
+ *         }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\AffectationRepository")
  */
 class Affectation
@@ -41,10 +68,10 @@ class Affectation
     private $compte;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="UserAffectes")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="userAffectes")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $UserQuiAffecte;
+    private $userQuiAffecte;
 
     public function getId(): ?int
     {
@@ -101,12 +128,12 @@ class Affectation
 
     public function getUserQuiAffecte(): ?User
     {
-        return $this->UserQuiAffecte;
+        return $this->userQuiAffecte;
     }
 
-    public function setUserQuiAffecte(?User $UserQuiAffecte): self
+    public function setUserQuiAffecte(?User $userQuiAffecte): self
     {
-        $this->UserQuiAffecte = $UserQuiAffecte;
+        $this->userQuiAffecte = $userQuiAffecte;
 
         return $this;
     }

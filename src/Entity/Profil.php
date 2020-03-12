@@ -4,23 +4,22 @@ namespace App\Entity;
 
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\RoleController;
 use App\Repository\ProfilRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProfilRepository")
  * @ApiResource(
- * attributes={"access_control"="is_granted('ROLE_ADMIN')"},
- * subresourceOperations={
- *          "api_role_get_collection"= {
- *              "method"="GET",
- *              "access_control"="has_role('ROLE_ADMIN')"
- *                       }
- *                  }
- * )
+ * collectionOperations={
+ *         "get"={
+ * "controller"=RoleController::class
+ * }
+ * })
  */
 class Profil
 {
@@ -28,11 +27,13 @@ class Profil
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $libelle;
 

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Compte;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\PartenaireController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,10 +14,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *  normalizationContext={"groups"={"read"}},
  *  denormalizationContext={"groups"={"post"}},
- * collectionOperations={
- *          "post"={"access_control"="is_granted('POST', object)"}
- *     },
- * )
+ *collectionOperations={
+ *         "get"={
+ *  "controller"=PartenaireController::class},
+ *         "post"={
+ * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM peut creer un user"
+ * }
+ *     })
  * @ORM\Entity(repositoryClass="App\Repository\PartenaireRepository")
  */
 class Partenaire
@@ -25,6 +29,7 @@ class Partenaire
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $id;
 

@@ -24,7 +24,6 @@ class AffectationDataPersister implements ContextAwareDataPersisterInterface
     public function supports($data, array $context = []): bool
     {
         return $data instanceof Affectation;
-        // TODO: Implement supports() method.
     }
     public function persist($data, array $context = [])
     {

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\UsersController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -21,7 +22,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *   normalizationContext={"groups"={"read"}},
  *  denormalizationContext={"groups"={"post"}},
  * collectionOperations={
- *          "post"={"access_control"="is_granted('POST', object)"}
+ *          "post"={"access_control"="is_granted('POST', object)"},
+ *          "get"={
+ * "controller"=UsersController::class
+ * }
  *     },
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -35,6 +39,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $id;
 
@@ -127,9 +132,9 @@ class User implements UserInterface
     private $affectations;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Affectation", mappedBy="UserQuiAffecte")
+     * @ORM\OneToMany(targetEntity="App\Entity\Affectation", mappedBy="userQuiAffecte")
      */
-    private $UserAffectes;
+    private $userAffectes;
 
     public function __construct()
     {
@@ -140,7 +145,7 @@ class User implements UserInterface
         $this->comptesCreer = new ArrayCollection();
         $this->partenairesCreer = new ArrayCollection();
         $this->affectations = new ArrayCollection();
-        $this->UserAffectes = new ArrayCollection();
+        $this->userAffectes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -448,13 +453,13 @@ class User implements UserInterface
       */
      public function getUserAffectes(): Collection
      {
-         return $this->UserAffectes;
+         return $this->userAffectes;
      }
 
      public function addUserAffecte(Affectation $userAffecte): self
      {
-         if (!$this->UserAffectes->contains($userAffecte)) {
-             $this->UserAffectes[] = $userAffecte;
+         if (!$this->userAffectes->contains($userAffecte)) {
+             $this->userAffectes[] = $userAffecte;
              $userAffecte->setUserQuiAffecte($this);
          }
 
@@ -463,8 +468,8 @@ class User implements UserInterface
 
      public function removeUserAffecte(Affectation $userAffecte): self
      {
-         if ($this->UserAffectes->contains($userAffecte)) {
-             $this->UserAffectes->removeElement($userAffecte);
+         if ($this->userAffectes->contains($userAffecte)) {
+             $this->userAffectes->removeElement($userAffecte);
              // set the owning side to null (unless already changed)
              if ($userAffecte->getUserQuiAffecte() === $this) {
                  $userAffecte->setUserQuiAffecte(null);

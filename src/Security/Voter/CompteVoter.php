@@ -24,7 +24,7 @@ class CompteVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
-        if ($user->getRoles()[0] === 'ROLE_ADMIN')
+        if ($user->getRoles()[0] === 'ROLE_ADMIN' || $user->getRoles()[0] === 'ROLE_ADMIN_SYSTEM')
         {
             return true;
         }

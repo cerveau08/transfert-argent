@@ -14,25 +14,21 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class TransactionDataPersister implements ContextAwareDataPersisterInterface
 {
     private $entityManager;
-    public function __construct(TransactionRepository $transfert,AffectationRepository $affect, EntityManagerInterface $entityManager,TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(TransactionRepository $transfert,AffectationRepository $affect, EntityManagerInterface $entityManager,TokenStorageInterface $tokenStorage) {
         $this->entityManager = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->affect = $affect;
         $this->transfert = $transfert;
     }
-    public function supports($data, array $context = []): bool
-    {
+    public function supports($data, array $context = []): bool {
         return $data instanceof Transaction;
-        // TODO: Implement supports() method.
     }
-    public function persist($data, array $context = [])
-    {
+    public function persist($data, array $context = []) {
              $userConnecter=$this->tokenStorage->getToken()->getUser();
              $role=$userConnecter->getRoles()[0];
              $leCode = $this->transfert->findOneByCode($data->getCode());
             // dd($leCode);
-             if($leCode == null){
+             if($leCode == null) {
                 if($role == "ROLE_CAISSIER_PARTENAIRE"){
                     $compteEmetteur=$this->affect->findCompteAffectTo($userConnecter)[0]->getCompte();
                     $data->setCompteEmetteur($compteEmetteur);
@@ -76,7 +72,6 @@ class TransactionDataPersister implements ContextAwareDataPersisterInterface
                 //dd($valeurEnvoi);
                 //Verifier le montant dispo
             
-                // var_dump($comptes); die();
                 if ($valeurEnvoi <= $compteEmetteur->getSolde()) {
                     $m = "GO";
                     $a = rand(1000, 9999);
@@ -104,6 +99,9 @@ class TransactionDataPersister implements ContextAwareDataPersisterInterface
                 $leCode->setUserCompteR($userConnecter);
                 $dateRetrait = new \DateTime();
                 $leCode->setDateRetrait($dateRetrait);
+                dd($data->getNumeroPieceR());
+                $leCode->setTypePieceR($data->getTypePieceR());
+                $leCode->setNumeroPieceR($data->getNumeroPieceR());
 
                 $this->entityManager->persist($leCode);
                 $this->entityManager->flush();
