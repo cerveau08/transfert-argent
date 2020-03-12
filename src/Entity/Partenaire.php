@@ -5,23 +5,25 @@ namespace App\Entity;
 use App\Entity\Compte;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\PartenaireController;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /** 
  * @ApiResource(
  *  normalizationContext={"groups"={"read"}},
  *  denormalizationContext={"groups"={"post"}},
  *collectionOperations={
- *         "get"={
- *  "controller"=PartenaireController::class},
+ *    "get",
  *         "post"={
  * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM peut creer un user"
  * }
  *     })
  * @ORM\Entity(repositoryClass="App\Repository\PartenaireRepository")
+ * @ApiFilter(SearchFilter::class, properties={"ninea": "exact"})
  */
 class Partenaire
 {

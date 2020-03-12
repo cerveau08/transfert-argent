@@ -2,12 +2,22 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * *collectionOperations={
+ *    "get",
+ *         "post"={
+ * "security"="is_granted(['ROLE_ADMIN_PARTENAIRE','ROLE_CAISSIER_PARTENAIRE','ROLE_PARTENAIRE'])", "security_message"="Seul les user affecter peuvent faire une transaction"
+ * }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\TransactionRepository")
+ * @ApiFilter(SearchFilter::class, properties={"code": "exact"})
  */
 class Transaction
 {

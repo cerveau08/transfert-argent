@@ -5,12 +5,13 @@ namespace App\Entity;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\CompteController;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 /**
  * @ApiResource(
  *  normalizationContext={"groups"={"read"}},
@@ -28,6 +29,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      "put"={"security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYST peut bloquer un user"}
  * } )
  * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
+ * @ApiFilter(SearchFilter::class, properties={"partenaire.ninea": "exact"})
  */
 class Compte
 {
