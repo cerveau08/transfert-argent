@@ -45,7 +45,6 @@ class TransactionDataPersister implements ContextAwareDataPersisterInterface
                     $value->getBorneInf();
                     $value->getBorneSup();
                     $value->getFrais();
-
                     if ($montant >= $value->getBorneInf() &&  $montant <= $value->getBorneSup()) {
                         $frais = $value->getFrais();
                     }  
@@ -83,6 +82,8 @@ class TransactionDataPersister implements ContextAwareDataPersisterInterface
                     $NouveauSolde = ($compteEmetteur->getSolde()-$valeurEnvoi);
                     $compteEmetteur->setSolde($NouveauSolde);
                     $data->setStatus('envoye');
+                    $data->setEtatPartE('en attente');
+                    $data->setEtatPartR('en attente');
                 }else{
                     throw new Exception("Le Solde de votre compte ne vous permet pas d'envoyer cette somme");
                 }
@@ -99,7 +100,7 @@ class TransactionDataPersister implements ContextAwareDataPersisterInterface
                 $leCode->setUserCompteR($userConnecter);
                 $dateRetrait = new \DateTime();
                 $leCode->setDateRetrait($dateRetrait);
-                dd($data->getNumeroPieceR());
+                // dd($data->getNumeroPieceR());
                 $leCode->setTypePieceR($data->getTypePieceR());
                 $leCode->setNumeroPieceR($data->getNumeroPieceR());
 

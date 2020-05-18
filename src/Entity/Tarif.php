@@ -6,7 +6,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations={"get"},
+ * attributes={"pagination_enabled"=false}
+ *)
  * @ORM\Entity(repositoryClass="App\Repository\TarifRepository")
  */
 class Tarif

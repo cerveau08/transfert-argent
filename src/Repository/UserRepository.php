@@ -52,24 +52,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-    public function ListUserToPartenaire($id)
+    public function ListCaissierToPartenaire($debut, $fin)
     {
         $queryBuilder = $this->_em->createQueryBuilder()
                             ->select('u')
                             ->from(User::class, 'u')
                             ->join('u.partenaire', 'p' ,'WITH', 'p.id = :id')
-                            ->join('u.affectCompteUser', 'a', 'WITH')
-                            ->where('u.userRole = 6')
-                            ->andWhere('a.userAffectCompte IS ')
+                            ->join('u.affections', 'a', 'WITH')
+                            ->where('p.dateDebut > :debut')
+                            ->andWhere('p.dateDebut > :fin')
                            //->andWhere('u.affectCompteUser IS  NULL')
-                            ->setParameter('id', $id);
+                            ->setParameter('debut', $debut);
                             $query = $queryBuilder->getQuery();
       return $query->getResult();
      }
     
 
     
-   /*
+   /*e
     public function findOneBySomeField($value): ?User
     {
         return $this->createQueryBuilder('u')

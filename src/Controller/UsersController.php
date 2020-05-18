@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Affectation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -19,6 +20,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
         
         $repo = $this->getDoctrine()->getRepository(User::class);
         $users = $repo->findAll();
+
+        
         
         $data = [];
         $i= 0;
@@ -38,19 +41,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
                 
             }
         }
-        elseif($rolesUser ===  'ROLE_PARTENAIRE')
-        {
-            $nineauser = $userconnect->getPartenaire()->getNinea();   
-            foreach($users as $user)
-            {
-                if(($user->getProfil()->getLibelle() === 'ROLE_ADMIN_PARTENAIRE' || $user->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE') && $nineauser === $user->getPartenaire()->getNinea())
-                {
-                    $data[$i]=$user;
-                    $i++;
-                }
-                
-            }
-        }
         elseif($rolesUser ===  'ROLE_ADMIN')
         {
             foreach($users as $user)
@@ -63,18 +53,17 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
                 
             }
         }
-        elseif($rolesUser ===  'ROLE_ADMIN_PARTENAIRE')
+        elseif($rolesUser ===  'ROLE_ADMIN_PARTENAIRE' || $rolesUser === 'ROLE_PARTENAIRE')
         {
-            $nineauser = $userconnect->getPartenaire()->getNinea();   
+            $nineauser = $userconnect->getPartenaire()->getNinea();
             foreach($users as $user)
-            {
-                if( $user->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE' && $nineauser === $user->getPartenaire()->getNinea())
-                {
-                    $data[$i]=$user;
-                    $i++;
+                  {
+                if($user->getProfil()->getLibelle() === 'ROLE_CAISSIER_PARTENAIRE' && $nineauser === $user->getPartenaire()->getNinea())
+                    {
+                        $data[$i]=$user;
+                        $i++;
+                    }
                 }
-                
-            }
         }
         else
         {

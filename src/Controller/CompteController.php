@@ -32,11 +32,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
             {
                     $formatDate  = $compte->getDateCreation()->format('Y-m-d');
                     $data[$i]=$compte;
-                    $i++;
-                
+                    $i++;      
             }
         }
-        elseif($rolesUser ===  'ROLE_PARTENAIRE' || $rolesUser === 'ROLE_ADMIN_PARTENAIRE')
+        elseif($rolesUser === 'ROLE_PARTENAIRE' || $rolesUser === 'ROLE_ADMIN_PARTENAIRE')
         {
             $nineauser = $userconnect->getPartenaire()->getNinea();   
             foreach($comptes as $compte)

@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 /**
  * @ApiResource(
  *   attributes = { 
@@ -13,10 +15,12 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 * "normalization_context" = {"groups" = {"read"}, " enable_max_depth "= true}, 
 *" force_eager "= false },
  * collectionOperations={
+ * "get",
  *          "post"={"security"="is_granted(['ROLE_ADMIN_SYST','ROLE_ADMIN','ROLE_CAISSIER'])", "security_message"="Seul ADMIN_SYST peut creer un user"}
  *     },
  * )
  * @ORM\Entity(repositoryClass="App\Repository\DepotRepository")
+ *@ApiFilter(SearchFilter::class, properties={"compte.numeroCompte": "exact"})
  */
 class Depot
 {

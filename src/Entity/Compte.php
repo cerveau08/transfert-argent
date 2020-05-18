@@ -17,8 +17,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *  normalizationContext={"groups"={"read"}},
  *  denormalizationContext={"groups"={"post"}},
  * collectionOperations={
- *         "get"={
- *  "controller"=CompteController::class},
+ *         "get",
  *         "post"={
  * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM ou ADMIN peut creer un compte"
  * }
@@ -29,7 +28,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      "put"={"security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYST peut bloquer un user"}
  * } )
  * @ORM\Entity(repositoryClass="App\Repository\CompteRepository")
- * @ApiFilter(SearchFilter::class, properties={"partenaire.ninea": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"numeroCompte": "exact"})
  */
 class Compte
 {

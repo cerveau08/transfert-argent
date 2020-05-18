@@ -6,9 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ * normalizationContext={"groups"={"read"}},
+ *  denormalizationContext={"groups"={"post"}},
  * *collectionOperations={
  *    "get",
  *         "post"={
@@ -132,13 +135,25 @@ class Transaction
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="transactionE")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post","read"})
      */
     private $compteEmetteur;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="transactionR")
+     * @Groups({"post","read"})
      */
     private $compteRecepteur;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $etatPartE;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $etatPartR;
 
     public function getId(): ?int
     {
@@ -405,6 +420,30 @@ class Transaction
     public function setCompteRecepteur(?Compte $compteRecepteur): self
     {
         $this->compteRecepteur = $compteRecepteur;
+
+        return $this;
+    }
+
+    public function getEtatPartE(): ?string
+    {
+        return $this->etatPartE;
+    }
+
+    public function setEtatPartE(?string $etatPartE): self
+    {
+        $this->etatPartE = $etatPartE;
+
+        return $this;
+    }
+
+    public function getEtatPartR(): ?string
+    {
+        return $this->etatPartR;
+    }
+
+    public function setEtatPartR(?string $etatPartR): self
+    {
+        $this->etatPartR = $etatPartR;
 
         return $this;
     }
