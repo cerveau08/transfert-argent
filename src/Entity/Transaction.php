@@ -28,81 +28,97 @@ class Transaction
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $code;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $montant;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $frais;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $nomCompletE;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $typePieceE;
 
     /**
      * @ORM\Column(type="bigint")
+     * @Groups({"post","read"})
      */
     private $numeroPieceE;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"post","read"})
      */
     private $dateEnvoi;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $telephoneE;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"post","read"})
      */
     private $commissionE;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $nomCompletR;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"post","read"})
      */
     private $typePieceR;
 
     /**
      * @ORM\Column(type="bigint", nullable=true)
+     * @Groups({"post","read"})
      */
     private $numeroPieceR;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"post","read"})
      */
     private $telephoneR;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"post","read"})
      */
     private $dateRetrait;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({"post","read"})
      */
     private $commisionR;
 
@@ -113,22 +129,26 @@ class Transaction
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({"post","read"})
      */
     private $taxeEtat;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $status;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="transactionE")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post","read"})
      */
     private $userCompteE;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="transactionR")
+     * @Groups({"post","read"})
      */
     private $userCompteR;
 
@@ -147,11 +167,13 @@ class Transaction
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $etatPartE;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","read"})
      */
     private $etatPartR;
 

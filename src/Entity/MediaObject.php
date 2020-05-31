@@ -17,13 +17,13 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ApiResource(
  *     iri="http://schema.org/MediaObject",
  *     normalizationContext={
- *         "groups"={"media_object_read"}
+ *         "groups"={"read"}
  *     },
  *     collectionOperations={
  *         "post"={
  *             "controller"=CreateMediaObjectAction::class,
  *             "deserialize"=false,
- *             "access_control"="is_granted('ROLE_ADMIN')",
+ *             "access_control"="is_granted(['ROLE_ADMIN', 'ROLE_ADMIN_SYSTEM', 'ROLE_PARTENAIRE'])",
  *             "validation_groups"={"Default", "media_object_create"},
  *             "openapi_context"={
  *                 "requestBody"={
@@ -66,7 +66,7 @@ class MediaObject
      * @var string|null
      *
      * @ApiProperty(iri="http://schema.org/contentUrl")
-     * @Groups({"media_object_read"})
+     * @Groups({"read"})
      */
     public $contentUrl;
 
@@ -75,6 +75,7 @@ class MediaObject
      *
      * @Assert\NotNull(groups={"media_object_create"})
      * @Vich\UploadableField(mapping="media_object", fileNameProperty="filePath")
+     * @Groups({"post","read"})
      */
     public $file;
 
@@ -82,6 +83,7 @@ class MediaObject
      * @var string|null
      *
      * @ORM\Column(nullable=true)
+     * @Groups({"post","read"})
      */
     public $filePath;
 

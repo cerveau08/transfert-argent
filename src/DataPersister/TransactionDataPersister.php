@@ -90,6 +90,7 @@ class TransactionDataPersister implements ContextAwareDataPersisterInterface
                 $this->entityManager->persist($data);
                 $this->entityManager->flush();
             }else{
+                if ($leCode->getStatus() !== 'retirer') {
                 if($role == "ROLE_CAISSIER_PARTENAIRE"){
                     $compteRecepteur=$this->affect->findCompteAffectTo($userConnecter)[0]->getCompte();
                     $leCode->setCompteRecepteur($compteRecepteur);
@@ -106,7 +107,10 @@ class TransactionDataPersister implements ContextAwareDataPersisterInterface
 
                 $this->entityManager->persist($leCode);
                 $this->entityManager->flush();
-            }     
+            } else {
+                throw new Exception("Ce code est deja retirer");
+            }    
+            } 
        
     }
    

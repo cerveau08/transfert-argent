@@ -23,10 +23,41 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *  denormalizationContext={"groups"={"post"}},
  * collectionOperations={
  *          "post"={"access_control"="is_granted('POST', object)"},
+ * "put",
  *          "get"={
  * "controller"=UsersController::class
  * }
- *     },
+ * },
+ * itemOperations={
+ *         "get",
+ * "put",
+ * "imageProfil"={
+ *  "method"="post",
+ * "normalization_context"={"groups"={"get"}},
+ *         "path"="/users/imageprofil/{id}",
+ *            "controller"=ControlImage::class,
+ *             "deserialize"=false,
+ *             "access_control"="is_granted('ROLE_ADMIN')",
+ *             "validation_groups"={"Default", "image_create"},
+ *             "openapi_context"={
+ *                 "requestBody"={
+ *                     "content"={
+ *                         "multipart/form-data"={
+ *                             "schema"={
+ *                                 "type"="object",
+ *                                 "properties"={
+ *                                     "file"={
+ *                                         "type"="string",
+ *                                         "format"="binary"
+ *                                     }
+ *                                 }
+ *                             }
+ *                         }
+ *                     }
+ *                 }
+ *             }
+ *         },
+ *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"username"}, message="Cet utilisateur existe déjà")
@@ -96,6 +127,7 @@ class User implements UserInterface
      * @ORM\ManyToOne(targetEntity=MediaObject::class)
      * @ORM\JoinColumn(nullable=true)
      * @ApiProperty(iri="http://schema.org/image")
+     * @Groups({"post","read"})
      */
     public $image;
 
@@ -135,6 +167,11 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Affectation", mappedBy="userQuiAffecte")
      */
     private $userAffectes;
+
+    /**
+     * @ORM\Column(type="blob", nullable=true)
+     */
+    private $imageProfil;
 
     public function __construct()
     {
@@ -475,6 +512,18 @@ class User implements UserInterface
                  $userAffecte->setUserQuiAffecte(null);
              }
          }
+
+         return $this;
+     }
+
+     public function getImageProfil()
+     {
+         return $this->imageProfil;
+     }
+
+     public function setImageProfil($imageProfil): self
+     {
+         $this->imageProfil = $imageProfil;
 
          return $this;
      }
