@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Controller\RolesController;
+use App\Controller\RoleController;
 use App\Repository\ProfilRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  * collectionOperations={
  *         "get"={
- * "controller"= RolesController::class
+ * "controller"=RolesController::class
  * }
  * })
  */

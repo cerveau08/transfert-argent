@@ -33,19 +33,19 @@ class ProfilRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
         ->select('p.id','p.libelle')
-            ->Where('p.libelle = :a OR p.libelle = :c')
-            ->setParameter('a', 'ROLE_ADMIN')
-            ->setParameter('c','ROLE_CAISSIER')
+            ->Where('p.libelle != :pa')
+            ->andWhere('p.libelle !=:pu')
+            ->setParameter('pu', 'ROLE_ADMIN')
+            ->setParameter('pa','ROLE_CAISSIER')
             ->getQuery()
             ->getResult()
         ;
-    } 
-     public function roleForA()
+    }  public function roleForA()
     {
         return $this->createQueryBuilder('p')
             ->select('p.id','p.libelle')
-            ->Where('p.libelle = :c ')
-            ->setParameter('c', 'ROLE_CAISSIER')
+            ->Where('p.libelle = :pa ')
+            ->setParameter('pa', 'ROLE_CAISSIER')
             ->getQuery()
             ->getResult()
         ;
@@ -54,9 +54,9 @@ class ProfilRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
         ->select('p.id','p.libelle')
-            ->Where('p.libelle = :cp OR p.libelle  = :ap')
-            ->setParameter('cp', 'ROLE_CAISSIER_PARTENAIRE')
-            ->setParameter('ap', 'ROLE_ADMIN_PARTENAIRE')
+            ->Where('p.libelle = :as OR p.libelle  = :pa')
+            ->setParameter('as', 'ROLE_CAISSIER_PARTENAIRE')
+            ->setParameter('pa', 'ROLE_ADMIN_PARTENAIRE')
             ->getQuery()
             ->getResult()
         ;
@@ -65,8 +65,8 @@ class ProfilRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
         ->select('p.id','p.libelle')
-            ->Where('p.libelle = :cp ')
-            ->setParameter('cp', 'ROLE_CAISSIER_PARTENAIRE')
+            ->Where('p.libelle = :as ')
+            ->setParameter('as', 'ROLE_CAISSIER_PARTENAIRE')
             ->getQuery()
             ->getResult()
         ;

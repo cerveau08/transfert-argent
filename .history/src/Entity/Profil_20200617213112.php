@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  * collectionOperations={
  *         "get"={
- * "controller"= RolesController::class
+ * "controller"=RolesController::class
  * }
  * })
  */

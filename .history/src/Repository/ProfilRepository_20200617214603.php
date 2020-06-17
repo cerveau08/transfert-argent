@@ -33,14 +33,14 @@ class ProfilRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
         ->select('p.id','p.libelle')
-            ->Where('p.libelle = :a OR p.libelle = :c')
+            ->Where('p.libelle != :ad OR p.libelle = :c')
             ->setParameter('a', 'ROLE_ADMIN')
             ->setParameter('c','ROLE_CAISSIER')
             ->getQuery()
             ->getResult()
         ;
     } 
-     public function roleForA()
+    public function roleForA()
     {
         return $this->createQueryBuilder('p')
             ->select('p.id','p.libelle')
