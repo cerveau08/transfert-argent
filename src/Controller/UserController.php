@@ -68,6 +68,11 @@ class UserController extends AbstractController
                 ];
             
         }
+        foreach($users as $user){
+                if($user->getImageProfil()){
+          $user->setImageProfil(base64_encode(stream_get_contents($user->getImageProfil())));
+          }
+                 }
         
      return $this->json($data, 200);
     }
@@ -113,6 +118,11 @@ class UserController extends AbstractController
             ];
         
           }
+          foreach($users as $user){
+                if($user->getImageProfil()){
+          $user->setImageProfil(base64_encode(stream_get_contents($user->getImageProfil())));
+          }
+                 }
           return $this->json($data, 200);
         }
 }

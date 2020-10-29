@@ -18,6 +18,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *  denormalizationContext={"groups"={"post"}},
  * collectionOperations={
  *         "get",
+ * "get_comptes"={
+ * "method":"get",
+ * "path":"/listeComptes",
+ * "controller":CompteController::class},
  *         "post"={
  * "security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])", "security_message"="Seul ADMIN_SYSTEM ou ADMIN peut creer un compte"
  * }

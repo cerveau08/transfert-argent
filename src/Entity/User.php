@@ -170,6 +170,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="blob", nullable=true)
+     * @Groups({"post","read"})
      */
     private $imageProfil;
 

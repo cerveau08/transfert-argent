@@ -57,8 +57,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
             
         }
         
-     return $this->json($data, 200);
+     return $data;
     }
-
-    
 }

@@ -73,6 +73,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
                 ];
             
         }
+        foreach($users as $user){
+                if($user->getImageProfil()){
+          $user->setImageProfil(base64_encode(stream_get_contents($user->getImageProfil())));
+          }
+        }
         
      return $this->json($data, 200);
     }
